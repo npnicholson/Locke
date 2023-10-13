@@ -7,19 +7,77 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A41708652AA53E190046EE34 /* ManageKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41708642AA53E190046EE34 /* ManageKeyView.swift */; };
+		A42254A52A8C77D800C156AF /* OpenArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A42A8C77D800C156AF /* OpenArchiveView.swift */; };
+		A42254A72A8C780D00C156AF /* Visual.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A62A8C780D00C156AF /* Visual.swift */; };
+		A42254A92A8C7DF300C156AF /* Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A82A8C7DF300C156AF /* Shake.swift */; };
+		A42254AB2A8C833700C156AF /* RemoveArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */; };
+		A42254AD2A8D08B600C156AF /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254AC2A8D08B600C156AF /* Model.swift */; };
 		A443B30C2A8AABBC00E3CA2D /* LockeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B30B2A8AABBC00E3CA2D /* LockeApp.swift */; };
 		A443B30E2A8AABBC00E3CA2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B30D2A8AABBC00E3CA2D /* ContentView.swift */; };
 		A443B3102A8AABBD00E3CA2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */; };
 		A443B3132A8AABBD00E3CA2D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A443B3122A8AABBD00E3CA2D /* Preview Assets.xcassets */; };
+		A443B31C2A8AAC0900E3CA2D /* Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B31B2A8AAC0900E3CA2D /* Archive.swift */; };
+		A443B31E2A8AAC4500E3CA2D /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B31D2A8AAC4500E3CA2D /* Operation.swift */; };
+		A443B3212A8B0CE800E3CA2D /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3202A8B0CE800E3CA2D /* SummaryView.swift */; };
+		A443B3232A8B24B200E3CA2D /* ArchivesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3222A8B24B200E3CA2D /* ArchivesView.swift */; };
+		A443B3282A8BCADA00E3CA2D /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */; };
+		A443B32A2A8BCDCB00E3CA2D /* NewArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */; };
+		A44696FC2A8F21E000B23EC4 /* SymbolPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */; };
+		A44696FF2A8F23A900B23EC4 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */; };
+		A4A5A8462A97D92700800559 /* Locke.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8452A97D92700800559 /* Locke.xcdatamodel */; };
+		A4A5A8492A99452D00800559 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8482A99452D00800559 /* MenuView.swift */; };
+		A4A5A84B2A9CE5C200800559 /* PasswordPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A84A2A9CE5C200800559 /* PasswordPromptView.swift */; };
+		A4A5A84D2A9D693500800559 /* ArchiveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A84C2A9D693500800559 /* ArchiveManager.swift */; };
+		A4A5A84F2A9FAB7600800559 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A84E2A9FAB7600800559 /* File.swift */; };
+		A4A5A8522A9FABA000800559 /* ArchiveObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8512A9FABA000800559 /* ArchiveObserver.swift */; };
+		A4A5A8542A9FB20300800559 /* Executors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8532A9FB20300800559 /* Executors.swift */; };
+		A4A5A8562A9FB24900800559 /* FileManagement.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8552A9FB24900800559 /* FileManagement.swift */; };
+		A4A5A85A2A9FB27900800559 /* Close.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8592A9FB27900800559 /* Close.swift */; };
+		A4A5A85C2A9FB28800800559 /* Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A85B2A9FB28800800559 /* Open.swift */; };
+		A4A5A85E2A9FB37F00800559 /* Compact.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A85D2A9FB37F00800559 /* Compact.swift */; };
+		A4A5A8602A9FB78D00800559 /* Remove.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A85F2A9FB78D00800559 /* Remove.swift */; };
+		A4A5A8622A9FB89800800559 /* Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8612A9FB89800800559 /* Create.swift */; };
+		A4A5A8642A9FB96000800559 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8632A9FB96000800559 /* Show.swift */; };
+		A4A5A8662A9FD63100800559 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8652A9FD63100800559 /* Keychain.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A41708642AA53E190046EE34 /* ManageKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageKeyView.swift; sourceTree = "<group>"; };
+		A42254A42A8C77D800C156AF /* OpenArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenArchiveView.swift; sourceTree = "<group>"; };
+		A42254A62A8C780D00C156AF /* Visual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Visual.swift; sourceTree = "<group>"; };
+		A42254A82A8C7DF300C156AF /* Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shake.swift; sourceTree = "<group>"; };
+		A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveArchiveView.swift; sourceTree = "<group>"; };
+		A42254AC2A8D08B600C156AF /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		A443B3082A8AABBC00E3CA2D /* Locke.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Locke.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A443B30B2A8AABBC00E3CA2D /* LockeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockeApp.swift; sourceTree = "<group>"; };
 		A443B30D2A8AABBC00E3CA2D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A443B3122A8AABBD00E3CA2D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A443B3142A8AABBD00E3CA2D /* Locke.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Locke.entitlements; sourceTree = "<group>"; };
+		A443B31B2A8AAC0900E3CA2D /* Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archive.swift; sourceTree = "<group>"; };
+		A443B31D2A8AAC4500E3CA2D /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
+		A443B3202A8B0CE800E3CA2D /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
+		A443B3222A8B24B200E3CA2D /* ArchivesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivesView.swift; sourceTree = "<group>"; };
+		A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
+		A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArchiveView.swift; sourceTree = "<group>"; };
+		A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPicker.swift; sourceTree = "<group>"; };
+		A4A5A8452A97D92700800559 /* Locke.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Locke.xcdatamodel; sourceTree = "<group>"; };
+		A4A5A8472A97F34A00800559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A4A5A8482A99452D00800559 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
+		A4A5A84A2A9CE5C200800559 /* PasswordPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordPromptView.swift; sourceTree = "<group>"; };
+		A4A5A84C2A9D693500800559 /* ArchiveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveManager.swift; sourceTree = "<group>"; };
+		A4A5A84E2A9FAB7600800559 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		A4A5A8512A9FABA000800559 /* ArchiveObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveObserver.swift; sourceTree = "<group>"; };
+		A4A5A8532A9FB20300800559 /* Executors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Executors.swift; sourceTree = "<group>"; };
+		A4A5A8552A9FB24900800559 /* FileManagement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagement.swift; sourceTree = "<group>"; };
+		A4A5A8592A9FB27900800559 /* Close.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Close.swift; sourceTree = "<group>"; };
+		A4A5A85B2A9FB28800800559 /* Open.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Open.swift; sourceTree = "<group>"; };
+		A4A5A85D2A9FB37F00800559 /* Compact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Compact.swift; sourceTree = "<group>"; };
+		A4A5A85F2A9FB78D00800559 /* Remove.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Remove.swift; sourceTree = "<group>"; };
+		A4A5A8612A9FB89800800559 /* Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Create.swift; sourceTree = "<group>"; };
+		A4A5A8632A9FB96000800559 /* Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
+		A4A5A8652A9FD63100800559 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +85,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A44696FF2A8F23A900B23EC4 /* SFSafeSymbols in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -36,6 +95,7 @@
 		A443B2FF2A8AABBC00E3CA2D = {
 			isa = PBXGroup;
 			children = (
+				A4A5A8452A97D92700800559 /* Locke.xcdatamodel */,
 				A443B30A2A8AABBC00E3CA2D /* Locke */,
 				A443B3092A8AABBC00E3CA2D /* Products */,
 			);
@@ -52,8 +112,13 @@
 		A443B30A2A8AABBC00E3CA2D /* Locke */ = {
 			isa = PBXGroup;
 			children = (
+				A4A5A8502A9FAB8C00800559 /* Archive */,
+				A4A5A8472A97F34A00800559 /* Info.plist */,
+				A443B31F2A8B0CD800E3CA2D /* Views */,
+				A443B31A2A8AABE900E3CA2D /* Library */,
 				A443B30B2A8AABBC00E3CA2D /* LockeApp.swift */,
 				A443B30D2A8AABBC00E3CA2D /* ContentView.swift */,
+				A42254AC2A8D08B600C156AF /* Model.swift */,
 				A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */,
 				A443B3142A8AABBD00E3CA2D /* Locke.entitlements */,
 				A443B3112A8AABBD00E3CA2D /* Preview Content */,
@@ -67,6 +132,69 @@
 				A443B3122A8AABBD00E3CA2D /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		A443B31A2A8AABE900E3CA2D /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				A443B31B2A8AAC0900E3CA2D /* Archive.swift */,
+				A443B31D2A8AAC4500E3CA2D /* Operation.swift */,
+				A42254A62A8C780D00C156AF /* Visual.swift */,
+				A42254A82A8C7DF300C156AF /* Shake.swift */,
+				A4A5A84E2A9FAB7600800559 /* File.swift */,
+				A4A5A8652A9FD63100800559 /* Keychain.swift */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		A443B31F2A8B0CD800E3CA2D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A443B3222A8B24B200E3CA2D /* ArchivesView.swift */,
+				A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */,
+				A4A5A8482A99452D00800559 /* MenuView.swift */,
+				A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */,
+				A42254A42A8C77D800C156AF /* OpenArchiveView.swift */,
+				A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */,
+				A443B3202A8B0CE800E3CA2D /* SummaryView.swift */,
+				A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */,
+				A4A5A84A2A9CE5C200800559 /* PasswordPromptView.swift */,
+				A41708642AA53E190046EE34 /* ManageKeyView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		A4A5A8502A9FAB8C00800559 /* Archive */ = {
+			isa = PBXGroup;
+			children = (
+				A4A5A84C2A9D693500800559 /* ArchiveManager.swift */,
+				A4A5A8512A9FABA000800559 /* ArchiveObserver.swift */,
+				A4A5A8582A9FB26C00800559 /* Flows */,
+				A4A5A8572A9FB25800800559 /* Extensions */,
+			);
+			path = Archive;
+			sourceTree = "<group>";
+		};
+		A4A5A8572A9FB25800800559 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				A4A5A8532A9FB20300800559 /* Executors.swift */,
+				A4A5A8552A9FB24900800559 /* FileManagement.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		A4A5A8582A9FB26C00800559 /* Flows */ = {
+			isa = PBXGroup;
+			children = (
+				A4A5A8592A9FB27900800559 /* Close.swift */,
+				A4A5A85B2A9FB28800800559 /* Open.swift */,
+				A4A5A85D2A9FB37F00800559 /* Compact.swift */,
+				A4A5A85F2A9FB78D00800559 /* Remove.swift */,
+				A4A5A8612A9FB89800800559 /* Create.swift */,
+				A4A5A8632A9FB96000800559 /* Show.swift */,
+			);
+			path = Flows;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +213,9 @@
 			dependencies = (
 			);
 			name = Locke;
+			packageProductDependencies = (
+				A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */,
+			);
 			productName = Locke;
 			productReference = A443B3082A8AABBC00E3CA2D /* Locke.app */;
 			productType = "com.apple.product-type.application";
@@ -113,6 +244,9 @@
 				Base,
 			);
 			mainGroup = A443B2FF2A8AABBC00E3CA2D;
+			packageReferences = (
+				A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+			);
 			productRefGroup = A443B3092A8AABBC00E3CA2D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -139,8 +273,36 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A443B32A2A8BCDCB00E3CA2D /* NewArchiveView.swift in Sources */,
 				A443B30E2A8AABBC00E3CA2D /* ContentView.swift in Sources */,
+				A42254A92A8C7DF300C156AF /* Shake.swift in Sources */,
+				A443B3212A8B0CE800E3CA2D /* SummaryView.swift in Sources */,
+				A42254A52A8C77D800C156AF /* OpenArchiveView.swift in Sources */,
+				A4A5A84B2A9CE5C200800559 /* PasswordPromptView.swift in Sources */,
+				A443B3232A8B24B200E3CA2D /* ArchivesView.swift in Sources */,
+				A44696FC2A8F21E000B23EC4 /* SymbolPicker.swift in Sources */,
+				A4A5A84D2A9D693500800559 /* ArchiveManager.swift in Sources */,
+				A42254AD2A8D08B600C156AF /* Model.swift in Sources */,
+				A4A5A8522A9FABA000800559 /* ArchiveObserver.swift in Sources */,
+				A42254A72A8C780D00C156AF /* Visual.swift in Sources */,
+				A4A5A8492A99452D00800559 /* MenuView.swift in Sources */,
+				A443B31C2A8AAC0900E3CA2D /* Archive.swift in Sources */,
+				A4A5A8562A9FB24900800559 /* FileManagement.swift in Sources */,
+				A443B3282A8BCADA00E3CA2D /* FavoritesView.swift in Sources */,
+				A42254AB2A8C833700C156AF /* RemoveArchiveView.swift in Sources */,
+				A4A5A8662A9FD63100800559 /* Keychain.swift in Sources */,
+				A4A5A8602A9FB78D00800559 /* Remove.swift in Sources */,
+				A4A5A8642A9FB96000800559 /* Show.swift in Sources */,
+				A4A5A8622A9FB89800800559 /* Create.swift in Sources */,
+				A4A5A8542A9FB20300800559 /* Executors.swift in Sources */,
+				A4A5A85E2A9FB37F00800559 /* Compact.swift in Sources */,
 				A443B30C2A8AABBC00E3CA2D /* LockeApp.swift in Sources */,
+				A4A5A8462A97D92700800559 /* Locke.xcdatamodel in Sources */,
+				A4A5A84F2A9FAB7600800559 /* File.swift in Sources */,
+				A4A5A85A2A9FB27900800559 /* Close.swift in Sources */,
+				A41708652AA53E190046EE34 /* ManageKeyView.swift in Sources */,
+				A443B31E2A8AAC4500E3CA2D /* Operation.swift in Sources */,
+				A4A5A85C2A9FB28800800559 /* Open.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +353,9 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -204,6 +369,7 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
 			};
 			name = Debug;
 		};
@@ -245,6 +411,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -271,9 +438,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Locke/Preview Content\"";
 				DEVELOPMENT_TEAM = 876QRQA4QD;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Locke/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Locke;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -298,9 +469,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Locke/Preview Content\"";
 				DEVELOPMENT_TEAM = 876QRQA4QD;
-				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Locke/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Locke;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -336,6 +511,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A443B3002A8AABBC00E3CA2D /* Project object */;
 }
