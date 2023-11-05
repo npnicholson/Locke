@@ -28,11 +28,12 @@ struct RequirementText: View {
     var body: some View {
         HStack {
             Image(systemName: isConformedTo ? "checkmark.circle" : iconName)
-                .foregroundColor(isConformedTo ? Color.secondary : Color(red: 251/255, green: 128/255, blue: 128/255))
+                .foregroundColor(isConformedTo ? Color(red: 100/255, green: 163/255, blue: 89/255) : Color(red: 251/255, green: 128/255, blue: 128/255))
+                .frame(minWidth: 10)
             Text(text)
                 .font(.system(.body, design: .rounded))
                 .foregroundColor(.secondary)
-                .strikethrough(isConformedTo)
+//                .strikethrough(isConformedTo)
             Spacer()
         }
         .padding(.horizontal)
@@ -155,94 +156,6 @@ struct SizeBar: View {
     }
 }
 
-// @see: https://onmyway133.com/posts/how-to-make-textview-in-swiftui-for-macos/
-/// A wrapper around NSTextView so we can get multiline text editing in SwiftUI.
-//struct CustomText: NSViewRepresentable {
-//    @Binding private var text: String
-//    @Binding private var isEditable: Bool
-//    @Binding private var isSecure: Bool
-//
-//
-//    init(text: Binding<String>, isEditable: Binding<Bool>, isSecure: Binding<Bool>) {
-//        _text = text
-//        _isEditable = isEditable
-//        _isSecure = isEditable
-//    }
-//
-//    init(text: String) {
-//        self.init(text: Binding<String>.constant(text), isEditable: Binding<Bool>.constant(true), isSecure: Binding<Bool>.constant(false))
-//    }
-//
-//    func makeNSView(context: Context) -> NSSecureTextField {
-//        let text = NSSecureTextField()
-//        text.backgroundColor = _isEditable.wrappedValue ? .textBackgroundColor : .clear
-//        text.delegate = context.coordinator
-////        text.isRichText = false
-//        text.font = NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
-////        text.autoresizingMask = [.width]
-////        text.translatesAutoresizingMaskIntoConstraints = true
-////        text.isVerticallyResizable = true
-////        text.isHorizontallyResizable = false
-//        text.isEditable = _isEditable.wrappedValue
-//
-//        return text
-//    }
-//
-//    func updateNSView(_ textField: NSSecureTextField, context: Context) {
-////        let text = view.documentView as? NSTextView
-////        text?.string = self.text
-//
-//        print ("Update \(self.text) \(isEditable)")
-//
-////        if (self.isSecure) {
-////            var str = ""
-////            for _ in 0...self.text.count {
-////                str += "-*"
-////            }
-////            textField.stringValue = str
-////        } else {
-//            textField.stringValue = self.text
-////        }
-//
-//
-//        textField.isEditable = self.isEditable
-//
-////        textField.effectiveAppearance.
-////        textField.isSecure = self.is
-//
-////        guard context.coordinator.selectedRanges.count > 0 else {
-////            return
-////        }
-////        text?.selectedRanges = context.coordinator.selectedRanges
-//    }
-//
-//    func makeCoordinator() -> Coordinator {
-//        return Coordinator(self)
-//    }
-//
-//    class Coordinator: NSObject, NSTextFieldDelegate {
-//        var parent: CustomText
-//
-//        init(_ parent: CustomText) {
-//            print ("Coordinator INIT")
-//            self.parent = parent
-//        }
-//
-//        func controlTextDidBeginEditing(_ obj: Notification) {
-//            print ("Testing123")
-//        }
-//
-//        func controlTextDidChange(_ notification: Notification) {
-//            print ("Testing")
-//
-//            guard let textView = notification.object as? NSTextField else { return }
-//            parent.text = textView.stringValue
-//
-//            print ("Did change \(textView.stringValue)")
-//        }
-//    }
-//}
-
 struct FormField: View {
     var fieldName = ""
     @Binding var fieldValue: String
@@ -250,7 +163,7 @@ struct FormField: View {
         VStack {
             TextField(fieldName, text: $fieldValue)
                 .textFieldStyle(.plain)
-                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .font(.system(size: 15, weight: .regular, design: .monospaced))
                 .padding(.horizontal)
             Divider()
             .frame(height: 1)

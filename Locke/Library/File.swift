@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import AppKit
 
 // Get the size of a directory
 // @see: https://stackoverflow.com/questions/32814535/how-to-get-directory-size-with-swift-on-os-x
@@ -58,4 +59,28 @@ func directoryModified(url: URL) -> Date? {
     } catch {
         return nil
     }
+}
+
+// Bring up a prompt to ask the user where to store a given file
+func exportToFile(contents: String, name: String) {
+    let savePanel = NSSavePanel()
+    savePanel.level = .popUpMenu
+    savePanel.nameFieldStringValue = "\(name)"
+    savePanel.begin { response in
+        if response == .OK, let fileURL = savePanel.url {
+            do {
+                try contents.write(to: fileURL, atomically: true, encoding: .utf8)
+                logger.trace("File saved successfully at \(fileURL)")
+            } catch {
+                logger.error("Error saving file: \(error)")
+            }
+        }
+    }
+}
+
+// Copy a given string to the clipboard
+func copyStringToClipboard (_ stringToCopy: String) {
+    let pasteboard = NSPasteboard.general
+    pasteboard.declareTypes([.string], owner: nil)
+    pasteboard.setString(stringToCopy, forType: .string)
 }

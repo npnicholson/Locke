@@ -36,31 +36,3 @@ func listArchives() -> [ArchiveBundlePath] {
         return [ ]
     }
 }
-
-// List all of the attached archives
-//func listAttached() throws -> [Archive] {
-//    // Get all files in the archives directory
-//    let allFiles = try fm.contentsOfDirectory(at: mountDirectory, includingPropertiesForKeys: nil)
-//    
-//    // Go through each URL and convert it to the file name only, without the extension
-//    var result: [Archive] = []
-//    allFiles.forEach { url in
-//        let name = url.lastPathComponent
-//        result.append(Archive(name: name))
-//    }
-//    
-//    return result
-//}
-
-
-//class LockeModel: ObservableObject {
-//    let container = NSPersistentContainer(name: "Locke")
-//    
-//    init() {
-//        container.loadPersistentStores { description, error in
-//            if let error = error {
-//                print("Core Data failed to load: \(error.localizedDescription)")
-//            }
-//        }
-//    }
-//}

@@ -25,8 +25,10 @@ import SwiftUI
 import AppKit
 import SFSafeSymbols
 import CryptoKit
+import UserNotifications
 
 let fm = FileManager.default
+let globalNotificationCenter = UNUserNotificationCenter.current()
 
 // Directories
 let appSupportURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -67,6 +69,52 @@ extension Comparable {
     }
 }
 
+// @see: https://stackoverflow.com/questions/65736518/how-do-i-create-a-slider-in-swiftui-for-an-int-type-property
+public extension Binding {
+    static func convert<TInt, TFloat>(from intBinding: Binding<TInt>) -> Binding<TFloat>
+    where TInt:   BinaryInteger,
+          TFloat: BinaryFloatingPoint{
+        Binding<TFloat> (
+            get: { TFloat(intBinding.wrappedValue) },
+            set: { intBinding.wrappedValue = TInt($0) }
+        )
+    }
+    static func convert<TFloat, TInt>(from floatBinding: Binding<TFloat>) -> Binding<TInt>
+    where TFloat: BinaryFloatingPoint,
+          TInt:   BinaryInteger {
+        Binding<TInt> (
+            get: { TInt(floatBinding.wrappedValue) },
+            set: { floatBinding.wrappedValue = TFloat($0) }
+        )
+    }
+}
+
+// @see: https://stackoverflow.com/questions/25965239/how-do-i-get-the-app-version-and-build-number-using-swift
+public extension Bundle {
+    var appName: String           { getInfo("CFBundleName") }
+    var displayName: String       { getInfo("CFBundleDisplayName") }
+    var language: String          { getInfo("CFBundleDevelopmentRegion") }
+    var identifier: String        { getInfo("CFBundleIdentifier") }
+    var copyright: String         { getInfo("NSHumanReadableCopyright").replacingOccurrences(of: "\\\\n", with: "\n") }
+
+    var appBuild: String          { getInfo("CFBundleVersion") }
+    var appVersionLong: String    { getInfo("CFBundleShortVersionString") }
+    //public var appVersionShort: String { getInfo("CFBundleShortVersion") }
+    
+    var buildDate: Date {
+        if let infoPath = Bundle.main.path(forResource: "Info", ofType: "plist"),
+            let infoAttr = try? FileManager.default.attributesOfItem(atPath: infoPath),
+            let infoDate = infoAttr[.modificationDate] as? Date {
+            return infoDate
+        }
+        return Date()
+    }
+
+    fileprivate func getInfo(_ str: String) -> String { infoDictionary?[str] as? String ?? "⚠️" }
+}
+
+
+
 // @see: https://www.fivestars.blog/articles/swiftui-share-layout-information/
 struct SizePreferenceKey: PreferenceKey {
   static var defaultValue: CGSize = .zero
@@ -82,6 +130,28 @@ extension View {
     )
     .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
   }
+}
+
+// @see: https://stackoverflow.com/questions/47714560/how-to-convert-dispatchtimeinterval-to-nstimeinterval-or-double
+extension DispatchTimeInterval {
+    func toSeconds() -> Int? {
+        var result: Int? = 0
+        switch self {
+        case .seconds(let value):
+            result = Int(Double(value))
+        case .milliseconds(let value):
+            result = Int(Double(value)*0.001)
+        case .microseconds(let value):
+            result = Int(Double(value)*0.000001)
+        case .nanoseconds(let value):
+            result = Int(Double(value)*0.000000001)
+        case .never:
+            result = nil
+        @unknown default:
+            result = nil
+        }
+        return result
+    }
 }
 
 struct ArchiveMonitorData {
@@ -112,7 +182,10 @@ func addSubview(subView:NSView, toView parentView:NSView) {
          viewBindingsDict["subView"] = subView
          parentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[subView]|", options: [], metrics: nil, views: viewBindingsDict))
          parentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[subView]|", options: [], metrics: nil, views: viewBindingsDict))
- }
+}
+
+// Define the global logger
+let logger = Logger()
 
 // MARK: - LockeDelegate
 
@@ -122,6 +195,7 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     public var mainWindow: NSWindow!
     public var archiveManager: ArchiveManager!
     public var passwordPromptManager: PasswordPromptManager!
+    public var notificationDelegate: NotificationDelegate!
     
     override init() {
         super.init()
@@ -131,20 +205,27 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         
         container.loadPersistentStores { description, error in
             if let error = error {
-                print("Core Data failed to load: \(error.localizedDescription)")
+                logger.error("Core Data failed to load: \(error.localizedDescription)")
             }
         }
         self.passwordPromptManager = PasswordPromptManager()
-        self.archiveManager = ArchiveManager(context: self.container.viewContext, storage: globalEphemeralStorage, lockeDelegate: self, passwordPromptManager: passwordPromptManager)
+        self.archiveManager = ArchiveManager(
+            context: self.container.viewContext,
+            storage: globalEphemeralStorage,
+            lockeDelegate: self,
+            passwordPromptManager: passwordPromptManager)
         globalEphemeralStorage.archiveManager = archiveManager
         
         // MARK: Main Window
         // Make a new NS Window
         self.mainWindow = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 600, height: 400),
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 200),
             styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
             backing: .buffered,
             defer: false)
+        
+        // Init a new notification delegate to handle application notifications
+        self.notificationDelegate = NotificationDelegate(lockeDelegate: self, archiveManager: self.archiveManager)
     }
     
     func applicationWillTerminate(_ notification: Notification) {
@@ -176,12 +257,14 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         // General Settings
         self.mainWindow.center()
         self.mainWindow.setFrameAutosaveName("MainView")
-        self.mainWindow.titlebarAppearsTransparent = false
+        self.mainWindow.titlebarAppearsTransparent = true
         self.mainWindow.title = "Locke"
         self.mainWindow.titleVisibility = .visible
         self.mainWindow.titlebarSeparatorStyle = .none
         self.mainWindow.collectionBehavior = .moveToActiveSpace
         self.mainWindow.level = NSWindow.Level.init(rawValue: 1)
+        
+        self.notificationDelegate.start()
     }
     
     @objc func openMainView() {
@@ -215,6 +298,17 @@ struct LockeApp: App {
                 .environment(\.managedObjectContext, lockeDelegate.container.viewContext)
                 .environmentObject(lockeDelegate.archiveManager)
                 .environmentObject(lockeDelegate)
+//                .onAppear {
+//                    NotificationCenter.default.addObserver(
+//                        forName: NSWindow.didChangeOcclusionStateNotification, object: nil, queue: nil)
+//                    { notification in
+//                        
+//                        if ((notification.object as! NSWindow).isVisible) {
+//                            ephemeralStorage.menuRefresh = !ephemeralStorage.menuRefresh
+//                            print ("Top Level \(ephemeralStorage.menuRefresh)")
+//                        }
+//                    }
+//                }
         } label: {
             HStack {
                 Image(systemSymbol: SFSymbol.lockRectangleStack)
@@ -222,6 +316,7 @@ struct LockeApp: App {
                     .transition(.opacity)
                     .id("MenuBarExtraTitle-" + (ephemeralStorage.archiveOpen ? "Open" : "Closed"))
             }
-        }.menuBarExtraStyle(.menu)
+        }
+        .menuBarExtraStyle(.menu)
     }
 }

@@ -3,12 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A41708652AA53E190046EE34 /* ManageKeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41708642AA53E190046EE34 /* ManageKeyView.swift */; };
-		A42254A52A8C77D800C156AF /* OpenArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A42A8C77D800C156AF /* OpenArchiveView.swift */; };
 		A42254A72A8C780D00C156AF /* Visual.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A62A8C780D00C156AF /* Visual.swift */; };
 		A42254A92A8C7DF300C156AF /* Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A82A8C7DF300C156AF /* Shake.swift */; };
 		A42254AB2A8C833700C156AF /* RemoveArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */; };
@@ -17,7 +15,6 @@
 		A443B30E2A8AABBC00E3CA2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B30D2A8AABBC00E3CA2D /* ContentView.swift */; };
 		A443B3102A8AABBD00E3CA2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */; };
 		A443B3132A8AABBD00E3CA2D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A443B3122A8AABBD00E3CA2D /* Preview Assets.xcassets */; };
-		A443B31C2A8AAC0900E3CA2D /* Archive.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B31B2A8AAC0900E3CA2D /* Archive.swift */; };
 		A443B31E2A8AAC4500E3CA2D /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B31D2A8AAC4500E3CA2D /* Operation.swift */; };
 		A443B3212A8B0CE800E3CA2D /* SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3202A8B0CE800E3CA2D /* SummaryView.swift */; };
 		A443B3232A8B24B200E3CA2D /* ArchivesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3222A8B24B200E3CA2D /* ArchivesView.swift */; };
@@ -25,6 +22,10 @@
 		A443B32A2A8BCDCB00E3CA2D /* NewArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */; };
 		A44696FC2A8F21E000B23EC4 /* SymbolPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */; };
 		A44696FF2A8F23A900B23EC4 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */; };
+		A459C31B2AE8509C003C8A75 /* MenuBarExtraAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A459C31A2AE8509C003C8A75 /* MenuBarExtraAccess */; };
+		A459C31D2AF01DFD003C8A75 /* Recover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459C31C2AF01DFD003C8A75 /* Recover.swift */; };
+		A459C31F2AF29A2E003C8A75 /* Generate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459C31E2AF29A2E003C8A75 /* Generate.swift */; };
+		A459C3212AF48C3A003C8A75 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459C3202AF48C3A003C8A75 /* Backup.swift */; };
 		A4A5A8462A97D92700800559 /* Locke.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8452A97D92700800559 /* Locke.xcdatamodel */; };
 		A4A5A8492A99452D00800559 /* MenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8482A99452D00800559 /* MenuView.swift */; };
 		A4A5A84B2A9CE5C200800559 /* PasswordPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A84A2A9CE5C200800559 /* PasswordPromptView.swift */; };
@@ -40,11 +41,15 @@
 		A4A5A8622A9FB89800800559 /* Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8612A9FB89800800559 /* Create.swift */; };
 		A4A5A8642A9FB96000800559 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8632A9FB96000800559 /* Show.swift */; };
 		A4A5A8662A9FD63100800559 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8652A9FD63100800559 /* Keychain.swift */; };
+		A4C572052ADDDAD4001C2CAA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572042ADDDAD4001C2CAA /* Logger.swift */; };
+		A4C572072ADDEC09001C2CAA /* ConsoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572062ADDEC09001C2CAA /* ConsoleView.swift */; };
+		A4C572092ADDFB74001C2CAA /* ArchiveWatchdog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */; };
+		A4C5720B2ADF1D3D001C2CAA /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C5720A2ADF1D3D001C2CAA /* Notification.swift */; };
+		A4F67A432ADB500B00999DA8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F67A422ADB500B00999DA8 /* SettingsView.swift */; };
+		A4F67A462ADDB3EB00999DA8 /* FilePicker in Frameworks */ = {isa = PBXBuildFile; productRef = A4F67A452ADDB3EB00999DA8 /* FilePicker */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A41708642AA53E190046EE34 /* ManageKeyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageKeyView.swift; sourceTree = "<group>"; };
-		A42254A42A8C77D800C156AF /* OpenArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenArchiveView.swift; sourceTree = "<group>"; };
 		A42254A62A8C780D00C156AF /* Visual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Visual.swift; sourceTree = "<group>"; };
 		A42254A82A8C7DF300C156AF /* Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shake.swift; sourceTree = "<group>"; };
 		A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveArchiveView.swift; sourceTree = "<group>"; };
@@ -55,13 +60,15 @@
 		A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A443B3122A8AABBD00E3CA2D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		A443B3142A8AABBD00E3CA2D /* Locke.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Locke.entitlements; sourceTree = "<group>"; };
-		A443B31B2A8AAC0900E3CA2D /* Archive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archive.swift; sourceTree = "<group>"; };
 		A443B31D2A8AAC4500E3CA2D /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		A443B3202A8B0CE800E3CA2D /* SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SummaryView.swift; sourceTree = "<group>"; };
 		A443B3222A8B24B200E3CA2D /* ArchivesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivesView.swift; sourceTree = "<group>"; };
 		A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArchiveView.swift; sourceTree = "<group>"; };
 		A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPicker.swift; sourceTree = "<group>"; };
+		A459C31C2AF01DFD003C8A75 /* Recover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recover.swift; sourceTree = "<group>"; };
+		A459C31E2AF29A2E003C8A75 /* Generate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Generate.swift; sourceTree = "<group>"; };
+		A459C3202AF48C3A003C8A75 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		A4A5A8452A97D92700800559 /* Locke.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Locke.xcdatamodel; sourceTree = "<group>"; };
 		A4A5A8472A97F34A00800559 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A4A5A8482A99452D00800559 /* MenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuView.swift; sourceTree = "<group>"; };
@@ -78,6 +85,11 @@
 		A4A5A8612A9FB89800800559 /* Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Create.swift; sourceTree = "<group>"; };
 		A4A5A8632A9FB96000800559 /* Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
 		A4A5A8652A9FD63100800559 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		A4C572042ADDDAD4001C2CAA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		A4C572062ADDEC09001C2CAA /* ConsoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleView.swift; sourceTree = "<group>"; };
+		A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveWatchdog.swift; sourceTree = "<group>"; };
+		A4C5720A2ADF1D3D001C2CAA /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		A4F67A422ADB500B00999DA8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +97,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F67A462ADDB3EB00999DA8 /* FilePicker in Frameworks */,
+				A459C31B2AE8509C003C8A75 /* MenuBarExtraAccess in Frameworks */,
 				A44696FF2A8F23A900B23EC4 /* SFSafeSymbols in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -119,6 +133,8 @@
 				A443B30B2A8AABBC00E3CA2D /* LockeApp.swift */,
 				A443B30D2A8AABBC00E3CA2D /* ContentView.swift */,
 				A42254AC2A8D08B600C156AF /* Model.swift */,
+				A4C572042ADDDAD4001C2CAA /* Logger.swift */,
+				A4C5720A2ADF1D3D001C2CAA /* Notification.swift */,
 				A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */,
 				A443B3142A8AABBD00E3CA2D /* Locke.entitlements */,
 				A443B3112A8AABBD00E3CA2D /* Preview Content */,
@@ -137,7 +153,6 @@
 		A443B31A2A8AABE900E3CA2D /* Library */ = {
 			isa = PBXGroup;
 			children = (
-				A443B31B2A8AAC0900E3CA2D /* Archive.swift */,
 				A443B31D2A8AAC4500E3CA2D /* Operation.swift */,
 				A42254A62A8C780D00C156AF /* Visual.swift */,
 				A42254A82A8C7DF300C156AF /* Shake.swift */,
@@ -154,12 +169,12 @@
 				A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */,
 				A4A5A8482A99452D00800559 /* MenuView.swift */,
 				A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */,
-				A42254A42A8C77D800C156AF /* OpenArchiveView.swift */,
 				A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */,
 				A443B3202A8B0CE800E3CA2D /* SummaryView.swift */,
 				A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */,
 				A4A5A84A2A9CE5C200800559 /* PasswordPromptView.swift */,
-				A41708642AA53E190046EE34 /* ManageKeyView.swift */,
+				A4F67A422ADB500B00999DA8 /* SettingsView.swift */,
+				A4C572062ADDEC09001C2CAA /* ConsoleView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -168,6 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				A4A5A84C2A9D693500800559 /* ArchiveManager.swift */,
+				A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */,
 				A4A5A8512A9FABA000800559 /* ArchiveObserver.swift */,
 				A4A5A8582A9FB26C00800559 /* Flows */,
 				A4A5A8572A9FB25800800559 /* Extensions */,
@@ -193,6 +209,9 @@
 				A4A5A85F2A9FB78D00800559 /* Remove.swift */,
 				A4A5A8612A9FB89800800559 /* Create.swift */,
 				A4A5A8632A9FB96000800559 /* Show.swift */,
+				A459C31C2AF01DFD003C8A75 /* Recover.swift */,
+				A459C31E2AF29A2E003C8A75 /* Generate.swift */,
+				A459C3202AF48C3A003C8A75 /* Backup.swift */,
 			);
 			path = Flows;
 			sourceTree = "<group>";
@@ -215,6 +234,8 @@
 			name = Locke;
 			packageProductDependencies = (
 				A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */,
+				A4F67A452ADDB3EB00999DA8 /* FilePicker */,
+				A459C31A2AE8509C003C8A75 /* MenuBarExtraAccess */,
 			);
 			productName = Locke;
 			productReference = A443B3082A8AABBC00E3CA2D /* Locke.app */;
@@ -228,7 +249,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					A443B3072A8AABBC00E3CA2D = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -246,6 +267,8 @@
 			mainGroup = A443B2FF2A8AABBC00E3CA2D;
 			packageReferences = (
 				A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
+				A4F67A442ADDB3EB00999DA8 /* XCLocalSwiftPackageReference "../../FilePicker" */,
+				A459C3192AE8509C003C8A75 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */,
 			);
 			productRefGroup = A443B3092A8AABBC00E3CA2D /* Products */;
 			projectDirPath = "";
@@ -277,8 +300,9 @@
 				A443B30E2A8AABBC00E3CA2D /* ContentView.swift in Sources */,
 				A42254A92A8C7DF300C156AF /* Shake.swift in Sources */,
 				A443B3212A8B0CE800E3CA2D /* SummaryView.swift in Sources */,
-				A42254A52A8C77D800C156AF /* OpenArchiveView.swift in Sources */,
 				A4A5A84B2A9CE5C200800559 /* PasswordPromptView.swift in Sources */,
+				A4C572052ADDDAD4001C2CAA /* Logger.swift in Sources */,
+				A459C31F2AF29A2E003C8A75 /* Generate.swift in Sources */,
 				A443B3232A8B24B200E3CA2D /* ArchivesView.swift in Sources */,
 				A44696FC2A8F21E000B23EC4 /* SymbolPicker.swift in Sources */,
 				A4A5A84D2A9D693500800559 /* ArchiveManager.swift in Sources */,
@@ -286,22 +310,26 @@
 				A4A5A8522A9FABA000800559 /* ArchiveObserver.swift in Sources */,
 				A42254A72A8C780D00C156AF /* Visual.swift in Sources */,
 				A4A5A8492A99452D00800559 /* MenuView.swift in Sources */,
-				A443B31C2A8AAC0900E3CA2D /* Archive.swift in Sources */,
 				A4A5A8562A9FB24900800559 /* FileManagement.swift in Sources */,
 				A443B3282A8BCADA00E3CA2D /* FavoritesView.swift in Sources */,
 				A42254AB2A8C833700C156AF /* RemoveArchiveView.swift in Sources */,
+				A4C572072ADDEC09001C2CAA /* ConsoleView.swift in Sources */,
 				A4A5A8662A9FD63100800559 /* Keychain.swift in Sources */,
 				A4A5A8602A9FB78D00800559 /* Remove.swift in Sources */,
 				A4A5A8642A9FB96000800559 /* Show.swift in Sources */,
+				A459C31D2AF01DFD003C8A75 /* Recover.swift in Sources */,
+				A459C3212AF48C3A003C8A75 /* Backup.swift in Sources */,
+				A4C5720B2ADF1D3D001C2CAA /* Notification.swift in Sources */,
 				A4A5A8622A9FB89800800559 /* Create.swift in Sources */,
 				A4A5A8542A9FB20300800559 /* Executors.swift in Sources */,
+				A4C572092ADDFB74001C2CAA /* ArchiveWatchdog.swift in Sources */,
 				A4A5A85E2A9FB37F00800559 /* Compact.swift in Sources */,
 				A443B30C2A8AABBC00E3CA2D /* LockeApp.swift in Sources */,
 				A4A5A8462A97D92700800559 /* Locke.xcdatamodel in Sources */,
 				A4A5A84F2A9FAB7600800559 /* File.swift in Sources */,
 				A4A5A85A2A9FB27900800559 /* Close.swift in Sources */,
-				A41708652AA53E190046EE34 /* ManageKeyView.swift in Sources */,
 				A443B31E2A8AAC4500E3CA2D /* Operation.swift in Sources */,
+				A4F67A432ADB500B00999DA8 /* SettingsView.swift in Sources */,
 				A4A5A85C2A9FB28800800559 /* Open.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -342,9 +370,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -406,9 +436,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
@@ -436,9 +468,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Locke/Preview Content\"";
 				DEVELOPMENT_TEAM = 876QRQA4QD;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Locke/Info.plist;
@@ -467,9 +500,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Locke/Preview Content\"";
 				DEVELOPMENT_TEAM = 876QRQA4QD;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Locke/Info.plist;
@@ -512,6 +546,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A4F67A442ADDB3EB00999DA8 /* XCLocalSwiftPackageReference "../../FilePicker" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../FilePicker;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -521,6 +562,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		A459C3192AE8509C003C8A75 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orchetect/MenuBarExtraAccess";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -528,6 +577,15 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
 			productName = SFSafeSymbols;
+		};
+		A459C31A2AE8509C003C8A75 /* MenuBarExtraAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A459C3192AE8509C003C8A75 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */;
+			productName = MenuBarExtraAccess;
+		};
+		A4F67A452ADDB3EB00999DA8 /* FilePicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FilePicker;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

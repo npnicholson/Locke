@@ -16,7 +16,7 @@ extension ArchiveManager {
 
         // Make sure there is an archive id ready
         guard let archiveId = archive.id else {
-            print ("No archive name given for removal!")
+            logger.error("No archive name given for removal!")
             return
         }
         
@@ -30,7 +30,7 @@ extension ArchiveManager {
             
             // Finally remove the salt from keychain
             Task {
-                try await Keychain.deletePassword(service: "Locke", account: archiveId.uuidString)
+                try! await Keychain.deleteKey(archiveId: archiveId)
             }
         } catch { }
         

@@ -21,10 +21,10 @@ struct FavoritesView: View {
                     .listRowSeparator(.visible)
             }
             .listStyle(.inset)
+            .scrollContentBackground(.hidden)
         }
-        .frame(minWidth: 550, maxWidth: .infinity, maxHeight: .infinity)
         .overlay(Group {
-            if archives.isEmpty {
+            if archives.filter({ $0.favorite }).isEmpty {
                 Text("Star an Archive to view it here!")
                     .font(.callout)
                     .foregroundColor(.primary)

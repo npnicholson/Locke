@@ -19,6 +19,9 @@ class ArchiveObserver {
     // A reference to the global context for CoreData storage
     private let context: NSManagedObjectContext
     
+    // A reference to the archive manager
+    public var manager: ArchiveManager! = nil
+    
     // Handler that is called after an archive is mounted or unmounted
     public var handler: (() -> Void)?
     
@@ -59,6 +62,10 @@ class ArchiveObserver {
                     // If it is, note it as attached and run the compleation handler
                     archive.attached = true
                     archive.lastOpened = Date()
+                    
+                    // Set up the watchdog
+                    self.manager.watchdog.watch(archive: archive)
+                    
                     contextChanged = true
                     if let handler = self.handler {
                         handler()
@@ -83,20 +90,37 @@ class ArchiveObserver {
             var contextChanged = false
             
             archives.forEach { archive in
-                // Ensure that the drive that was mounted was one of Locke's archives
-                if (devicePath == archive.mountURL?.path(percentEncoded: false)) {
-                    
-                    // If it is, note it as detached and update the archives size. Then run the
-                    // compleation handler
-                    archive.attached = false
-                    if let url = archive.bundleURL {
-                        archive.size = directorySize(url: url)
-                        archive.modified = directoryModified(url: url)
+                // Delay one second to allow the OS to actually eject the archive.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    // Ensure that the drive that was mounted was one of Locke's archives
+                    if (devicePath == archive.mountURL?.path(percentEncoded: false)) {
+                        
+                        // If it is, note it as detached and update the archives size. Then run the
+                        // compleation handler
+                        archive.attached = false
+                        archive.scheduledClose = ""
+                        
+                        // Unwatch the archive
+                        self.manager.watchdog.unwatch(archive: archive)
+                        
+                        // Compact it if required
+                        if (UserDefaults.standard.bool(forKey: "setting.CompactOnDetach")) {
+                            if let id = archive.id, let hash = self.manager.openArchives[id] {
+                                logger.trace("Compacting Archive from Observer")
+                                try? self.manager.executeCompact(archive, password: hash)
+                            }
+                        }
+                        
+                        // Update size and modified date
+                        if let url = archive.bundleURL {
+                            archive.size = directorySize(url: url)
+                            archive.modified = directoryModified(url: url)
+                        }
+                        if let handler = self.handler {
+                            handler()
+                        }
+                        contextChanged = true
                     }
-                    if let handler = self.handler {
-                        handler()
-                    }
-                    contextChanged = true
                 }
             }
             

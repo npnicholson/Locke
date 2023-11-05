@@ -24,6 +24,9 @@ extension ArchiveManager {
         // Try to attach the archive
         let operation = try executeTask(executable: hdiutil, arguments: ["attach", "-stdinpass", "-mountpoint", mountURL.path(percentEncoded: false), bundleURL.path(percentEncoded: false)], inputPipeString: password)
         
+        // Log this operation
+        logOperation(operation: operation)
+        
         // If the operation does not work, then throw an error
         if (!operation.success) { throw ArchiveError.operationFailure(operation)}
         
@@ -42,7 +45,10 @@ extension ArchiveManager {
         }
         
         // Try to detach the archive
-        let _ = try executeTask(executable: hdiutil, arguments: ["detach", mountURL.path(percentEncoded: false)])
+        let operation = try executeTask(executable: hdiutil, arguments: ["detach", mountURL.path(percentEncoded: false)])
+        
+        // Log this operation
+        logOperation(operation: operation)
         
         // Ensure that the archive was detached
         if (self.attached(archive)) { throw ArchiveError.notDetached }
@@ -61,6 +67,9 @@ extension ArchiveManager {
         // Try to compact the archive
         let operation = try executeTask(executable: hdiutil, arguments: ["compact", "-stdinpass", "-batteryallowed", bundleURL.path(percentEncoded: false)], inputPipeString: password)
         
+        // Log this operation
+        logOperation(operation: operation)
+        
         // If the operation does not work, then throw an error
         if (!operation.success) { throw ArchiveError.operationFailure(operation)}
     }
@@ -77,6 +86,9 @@ extension ArchiveManager {
 
         // Try to make the archive using hdiutil
         let operation = try executeTask( executable: hdiutil, arguments: ["create", "-type", "SPARSEBUNDLE", "-size", "\(archive.maxSize)Gb", "-fs", "Case-sensitive APFS", "-encryption", "AES-256", "-stdinpass", "-volname", archive.name ?? "unnamed", bundleURL.path(percentEncoded: false)], inputPipeString: password)
+        
+        // Log this operation
+        logOperation(operation: operation)
         
         // If the operation does not work, then throw an error
         if (!operation.success) { throw ArchiveError.operationFailure(operation)}
@@ -103,5 +115,38 @@ extension ArchiveManager {
         
         // Ensure that the archive was removed
         if (self.exists(archive)) { throw ArchiveError.notRemoved }
+    }
+    
+    // Remove the archive from disk
+    internal func executeBackup(_ archive: ArchiveData, _ outputURL: URL) throws -> Void {
+        // If the archive doesnt exist, then throw an error
+        if (!self.exists(archive)) { throw ArchiveError.archiveDoesNotExist }
+        
+        // If the archive is attached, then we should not back it up. They should detach it first
+        if (self.attached(archive)) { throw ArchiveError.archiveAttached }
+        
+        // Ensure that the bundle url is valid
+        guard let bundleURL = archive.bundleURL else {
+            throw ArchiveError.archiveDoesNotExist
+        }
+        
+        print ("a", bundleURL.path(percentEncoded: false), outputURL.path(percentEncoded: false))
+        
+        
+        try! fm.copyItem(atPath: bundleURL.path(percentEncoded: false), toPath: outputURL.path(percentEncoded: false))
+    }
+}
+
+func logOperation(operation: Operation) {
+    if let stdout = operation.stdout {
+        if (!stdout.isEmpty) {
+            logger.trace(stdout)
+        }
+    }
+    
+    if let stderr = operation.stderr {
+        if (!stderr.isEmpty) {
+            logger.error(stderr)
+        }
     }
 }

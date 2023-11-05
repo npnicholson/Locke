@@ -10,19 +10,27 @@ import SFSafeSymbols
 
 struct ArchiveView: View {
     @ObservedObject var archive: ArchiveData
+    @EnvironmentObject var archiveManager: ArchiveManager
+    
     var body: some View {
         HStack (spacing: 10) {
             VStack(alignment: .leading, spacing: 2) {
-                Text(archive.name ?? "Unknown")
-                    .font(.headline)
-                    .help("ID: \(archive.id?.uuidString ?? "Unknwon")")
+                HStack {
+                    Text(archive.name ?? "Unknown")
+                        .font(.headline)
+                        .help("ID: \(archive.id?.uuidString ?? "Unknwon")")
+                    Text(archive.scheduledClose ?? "")
+                        .font(.callout)
+                        .fontWeight(.regular)
+                        .foregroundColor(.secondary)
+                }
                 HStack {
                     Text("Size \(formatBytes(archive.size))")
                         .font(.callout)
                         .fontWeight(.regular)
                         .foregroundColor(.secondary)
                     if let modified = archive.modified {
-                        Text("Modified \(modified.formatted(date: .abbreviated, time: .shortened))")
+                        Text("Modified \(modified.formatted(date: .numeric, time: .shortened))")
                             .font(.callout)
                             .fontWeight(.regular)
                             .foregroundColor(.secondary)
@@ -43,6 +51,98 @@ struct Observers {
     let unmount: NSObjectProtocol
 }
 
+struct ArchiveContextMenu: View {
+    @EnvironmentObject var archiveManager: ArchiveManager
+    @ObservedObject var archive: ArchiveData
+    @Binding var presentRemoveArchive: Bool
+    
+    var body: some View {
+        Button (archive.attached ? "Lock" : "Unlock") {
+            if (archive.attached) {
+                archiveManager.close(archive.objectID)
+            } else {
+                archiveManager.open(archive.objectID)
+            }
+        }
+        .help(archive.attached ? "Lock this archive" : "Unlock this archive")
+        .keyboardShortcut("l")
+        
+        Button ("Reveal in Finder") {
+            archiveManager.show(archive.objectID)
+        }
+        .disabled(!archive.attached)
+        .help(archive.attached ? "Open archive in Finder" : "")
+        .keyboardShortcut("o")
+        
+        Button ("Show Archive File") {
+            archiveManager.showBundle(archive.objectID)
+        }
+        .help("Open encrypted archive in Finder")
+        .keyboardShortcut("s")
+        
+        Button ("Compact") {
+            archiveManager.compact(archive.objectID)
+        }
+        .disabled(archive.attached)
+        .help(archive.attached ? "" : "Compact archive to recover free space")
+        .keyboardShortcut("c")
+        
+        Button ("Backup") {
+            archiveManager.backup(archive.objectID)
+        }
+        .disabled(archive.attached)
+        .help(archive.attached ? "" : "Back up the archive")
+        .keyboardShortcut("c")
+        
+        Divider()
+        Text("Auto Closure")
+        Button (" Schedule Closure") {
+            if (!archive.watched && archive.attached) {
+                self.archiveManager.watchdog.watch(archive: archive)
+            }
+        }
+        .help("Schedule automatic closure of this archive")
+        .disabled(archive.watched || !archive.attached)
+        Button (" Cancel Closure") {
+            self.archiveManager.watchdog.unwatch(archive: archive)
+        }
+        .help("Cancel automatic closure of this archive")
+        .disabled(!archive.watched)
+        Button (" Reset Closure") {
+            self.archiveManager.watchdog.unwatch(archive: archive)
+            self.archiveManager.watchdog.watch(archive: archive)
+        }
+        .help("Postpone automatic closure of this archive")
+        .disabled(!archive.watched)
+        
+        Divider()
+        Text("Recovery")
+        Button (" Recover with Key") {
+            archiveManager.recover(archive.objectID)
+        }
+        .disabled(archive.attached)
+        .help(archive.attached ? "Recover Archive using a recovery key" : "")
+        
+        Button (" Copy Key to Clipboard") {
+            archiveManager.generate(archive.objectID, .copy)
+        }
+        .help("Generate the recovery key and copy to clipboard")
+        
+        Button (" Save Key to Disk") {
+            archiveManager.generate(archive.objectID, .store)
+        }
+        .help("Generate the recovery key and save to disk")
+        
+        Divider()
+        
+        Button ("Remove Archive", role: .destructive) {
+            presentRemoveArchive = true
+        }
+        .disabled(archive.attached)
+        .help(archive.attached ? "" : "Remove archive")
+    }
+}
+
 struct ArchiveListItemView: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject var archiveManager: ArchiveManager
@@ -59,7 +159,7 @@ struct ArchiveListItemView: View {
                 .fill(.clear)
                 .contentShape(Rectangle())
             VStack {
-                HStack {
+                HStack(spacing: 0) {
                     ArchiveView(archive: archive)
                     Spacer()
                     Button {
@@ -69,8 +169,14 @@ struct ArchiveListItemView: View {
                             archiveManager.open(archive.objectID)
                         }
                     } label: { 
-                        Image(systemName: archive.attached ? "eject.fill" : "lock")
-                            .frame(width: 15)
+                        ZStack {
+                            Rectangle()
+                                .fill(.clear)
+                                .contentShape(Rectangle())
+                                .frame(maxWidth: 25, maxHeight: 25)
+                            Image(systemName: archive.attached ? "eject.fill" : "lock")
+                                .frame(width: 15)
+                        }
                     }
                     .buttonStyle(.plain)
                     .help(archive.attached ? "Lock archive" : "Unlock archive")
@@ -81,61 +187,41 @@ struct ArchiveListItemView: View {
                             archive.favorite = !archive.favorite
                             try? moc.save()
                         } label: {
-                            Image(systemName: archive.favorite ? "star.fill" : "star")
+                            ZStack {
+                                Rectangle()
+                                    .fill(.clear)
+                                    .contentShape(Rectangle())
+                                    .frame(maxWidth: 25, maxHeight: 25)
+                                Image(systemName: archive.favorite ? "star.fill" : "star")
+                            }
+                            
                         }
                         .buttonStyle(.plain)
                         .help(archive.favorite ? "Unfavorite archive" : "Favorite archive")
                     }
                     Menu {
-                        Button (archive.attached ? "Lock" : "Unlock") {
-                            if (archive.attached) {
-                                archiveManager.close(archive.objectID)
-                            } else {
-                                archiveManager.open(archive.objectID)
-                            }
-                        }
-                        .help(archive.attached ? "Lock this archive" : "Unlock this archive")
-                        
-                        Button ("Reveal in Finder") {
-                            archiveManager.show(archive.objectID)
-                        }
-                        .disabled(!archive.attached)
-                        .help(archive.attached ? "Open archive in Finder" : "")
-                       
-                        Button ("Compact") {
-                            archiveManager.compact(archive.objectID)
-                        }
-                        .disabled(archive.attached)
-                        .help(archive.attached ? "" : "Compact archive to recover free space")
-
-                        Divider()
-
-                        Button ("Remove Archive", role: .destructive) {
-                            presentRemoveArchive = true
-                        }
-                        .disabled(archive.attached)
-                        .help(archive.attached ? "" : "Remove archive")
-                        
-                        
+                        ArchiveContextMenu(archive: archive, presentRemoveArchive: $presentRemoveArchive)
                     } label: {
-                        Image(systemSymbol: SFSymbol.line3Horizontal)
+                        ZStack {
+                            Rectangle()
+                                .fill(.clear)
+                                .contentShape(Rectangle())
+                                .frame(maxWidth: 25, maxHeight: 25)
+                            Image(systemSymbol: SFSymbol.line3Horizontal)
+                        }
                     }
                     .buttonStyle(.plain)
                 }
             }
+        }
+        .contextMenu {
+            ArchiveContextMenu(archive: archive, presentRemoveArchive: $presentRemoveArchive)
         }
         .confirmationDialog("Are you sure you want to remove \(archive.name ?? "this archive")?", isPresented: $presentRemoveArchive) {
             Button("Remove", role: .destructive) {
                 archiveManager.remove(archive.objectID)
             }
         }
-        .gesture(TapGesture(count: 2).onEnded {
-            if (archive.attached) {
-                archiveManager.show(archive.objectID)
-            } else {
-                archiveManager.open(archive.objectID)
-            }
-        })
     }
 }
 
@@ -152,24 +238,10 @@ struct ArchivesView: View {
                 ArchiveListItemView(errorMessage: $errorMessage, archive: archive, showFavorite: showFavorites)
                     .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 3))
                     .listRowSeparator(.visible)
-//                    .contextMenu {
-//                            Button {
-//                                print("Change country setting")
-//                            } label: {
-//                                Label("Choose Country", systemImage: "globe")
-//                            }
-//
-//                            Button {
-//                                print("Enable geolocation")
-//                            } label: {
-//                                Label("Detect Location", systemImage: "location.circle")
-//                            }
-//                        }
             }
             .listStyle(.inset)
-            .background(.clear)
+            .scrollContentBackground(.hidden)
         }
-        .frame(minWidth: 550, maxWidth: .infinity, maxHeight: .infinity)
         .overlay(Group {
             if archives.isEmpty {
                 Text("Create an Archive to get started!")
@@ -177,16 +249,6 @@ struct ArchivesView: View {
                     .foregroundColor(.primary)
             }
         })
-//        .onAppear() {
-//            print (archives)
-//
-//            archives.forEach { archive in
-//                moc.delete(archive)
-//            }
-//
-//            try? moc.save()
-//
-//        }
     }
 }
 

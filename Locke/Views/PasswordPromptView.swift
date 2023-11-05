@@ -22,10 +22,15 @@ class PasswordPromptManager: ObservableObject {
     // the prompt is not visible when not in use, it still exists and therefore isnt
     // "redrawn" each time
     @Published public var archive: ArchiveData!
-    @Published public var prompt: String!
+    @Published public var title: String = ""
+    @Published public var subtitle: String = ""
+    @Published public var prompt: String = ""
+    @Published public var incorrectSleepTime: UInt32 = 1
+    
+    public var data: Any?
     
     // The handler, which should be set by the object which activated the handler
-    public var handler: ((PromptResult, ArchiveData, String) -> Bool)? = nil
+    public var handler: ((PromptResult, ArchiveData, String, Any?) -> Bool)? = nil
     
     // Private vars for the window and storage objects
     private let window: NSWindow
@@ -95,7 +100,7 @@ class PasswordPromptManager: ObservableObject {
     func execute(_ result: PromptResult, password: String = "") -> Bool {
         // If the handler has been set, then excecute it
         if let handler = self.handler {
-            return handler(result, archive, password)
+            return handler(result, archive, password, self.data)
         }
         
         // If there was no handler, then I guess we can call this a success? Otherwise the
@@ -104,11 +109,16 @@ class PasswordPromptManager: ObservableObject {
     }
     
     // Activate the prompt by showing it to the user
-    func activate(_ handler: @escaping (PromptResult, ArchiveData, String) -> Bool, archive: ArchiveData, prompt: String) {
+    func activate(_ handler: @escaping (PromptResult, ArchiveData, String, Any?) -> Bool, archive: ArchiveData, title: String? = nil, subtitle: String? = nil, prompt: String? = nil, sleepTimeIfWrong: UInt32? = nil, data: Any? = nil) {
         // Store the handler and archive name from the activating caller
         self.handler = handler
         self.archive = archive
-        self.prompt = prompt
+        
+        self.title = title ?? "Locke: Enter your password."
+        self.subtitle = subtitle ?? "Please enter the password for '\(self.archive?.name ?? "Unknown")'."
+        self.prompt = prompt ?? ""
+        self.incorrectSleepTime = sleepTimeIfWrong ?? 1
+        self.data = data
         
         // Show and center the window
         self.window.level = NSWindow.Level.init(rawValue: 2)
@@ -147,7 +157,7 @@ struct PasswordPromptView: View {
             // Close the window
             manager.deactivate()
         } else {
-            sleep(1)
+            sleep(manager.incorrectSleepTime)
             shake = true
         }
     }
@@ -176,15 +186,15 @@ struct PasswordPromptView: View {
             }
             Spacer()
             VStack (alignment: .leading, spacing: 15) {
-                Text ("Locke: Enter your password.")
+                Text (manager.title)
                     .font(.system(.title3, design: .rounded))
                     .bold()
                     .foregroundColor(.primary)
                 VStack (alignment: .leading, spacing: 0) {
-                    Text ("Please enter the password for '\(manager.archive?.name ?? "Unknown")'.")
+                    Text (manager.subtitle)
                         .font(.system(.body, design: .rounded))
                         .foregroundColor(.primary)
-                    Text (manager.prompt ?? "Unknown")
+                    Text (manager.prompt)
                         .font(.system(.body, design: .rounded))
                         .foregroundColor(.primary)
                 }
@@ -208,10 +218,10 @@ struct PasswordPromptView: View {
                         Text("Cancel")
                             .font(.system(.body, design: .rounded))
                             .frame(width: 80, height: 20)
-                            .background(Color(.init(red: 93/255, green: 98/255, blue: 103/255, alpha: 0.5)))
+//                            .background(Color(.init(red: 93/255, green: 98/255, blue: 103/255, alpha: 0.5)))
                             .cornerRadius(5)
                     }
-                    .buttonStyle(.plain)
+//                    .buttonStyle(.plain)
                     .keyboardShortcut(.cancelAction)
                     
                     Button {
@@ -220,10 +230,10 @@ struct PasswordPromptView: View {
                         Text("Submit")
                             .font(.system(.body, design: .rounded))
                             .frame(width: 80, height: 20)
-                            .background(Color(.init(red: 93/255, green: 98/255, blue: 103/255, alpha: 0.5)))
+//                            .background(Color(.init(red: 93/255, green: 98/255, blue: 103/255, alpha: 0.5)))
                             .cornerRadius(5)
                     }
-                    .buttonStyle(.plain)
+//                    .buttonStyle(.plain)
                     .keyboardShortcut(.defaultAction)
                 }
                 Spacer()

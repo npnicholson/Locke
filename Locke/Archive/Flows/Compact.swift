@@ -26,13 +26,30 @@ extension ArchiveManager {
     }
     
     // Receive data from the password prompt and compact the archive
-    private func compactHandler(_ result: PromptResult, _ archive: ArchiveData, _ password: String) -> Bool {
+    private func compactHandler(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any) -> Bool {
         if (result == .cancled) {
             return false
         }
         
+        guard let id = archive.id else {
+            return false
+        }
+        
         do {
-            try self.executeCompact(archive, password: password)
+            // Calculate the password for this archive
+            let hashString = Keychain.deriveKey(password: password, archiveId: id)
+            
+            // Compact the archive
+            try self.executeCompact(archive, password: hashString)
+            
+            // Update the size of the archive
+            if let bundleURL = archive.bundleURL {
+                archive.size = directorySize(url: bundleURL)
+                try? self.context.save()
+            }
+            
+            // Update the list of active archives
+            self.scanArchiveMounts()
             return true
         } catch {
             return false

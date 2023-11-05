@@ -8,6 +8,15 @@
 import Foundation
 import CryptoKit
 
+// @see: https://stackoverflow.com/questions/25388747/sha256-in-swift
+extension Digest {
+    var bytes: [UInt8] { Array(makeIterator()) }
+    var hexString: String {
+        bytes.map { String(format: "%02X", $0) }.joined()
+    }
+}
+
+
 // @see: https://stackoverflow.com/questions/30719638/save-and-retrieve-value-via-keychain
 class Keychain {
     enum KeychainError: Error {
@@ -149,12 +158,12 @@ class Keychain {
         return password
     }
     
-    static func deletePassword(service: String, account: String) async throws {
+    static func deleteKey(archiveId: UUID) async throws {
         let query: [String: AnyObject] = [
             // kSecAttrService,  kSecAttrAccount, and kSecClass
             // uniquely identify the item to delete in Keychain
-            kSecAttrService as String: service as AnyObject,
-            kSecAttrAccount as String: account as AnyObject,
+            kSecAttrService as String: "Locke" as AnyObject,
+            kSecAttrAccount as String: archiveId.uuidString as AnyObject,
             kSecClass as String: kSecClassGenericPassword
         ]
 
@@ -204,7 +213,7 @@ class Keychain {
         hash.update(data: passwordData)
         hash.update(data: saltData)
         
-        return hash.finalize().withUnsafeBytes {Data(Array($0)).base64EncodedString()}
+        return hash.finalize().hexString
     }
     
     static func deriveKey(password: String, archiveId: UUID) -> String {
@@ -219,6 +228,6 @@ class Keychain {
         hash.update(data: passwordData)
         hash.update(data: saltData)
         
-        return hash.finalize().withUnsafeBytes {Data(Array($0)).base64EncodedString()}
+        return hash.finalize().hexString
     }
 }

@@ -201,6 +201,7 @@ struct SummaryView: View {
     @State var buttonVerticalScale: Double = 1
     @State var buttonHorizontalScale: Double = 1
 
+
     @State var presentTest = true
     
     var body: some View {
@@ -266,22 +267,6 @@ struct SummaryView: View {
         .sheet(isPresented: $presentNewArchiveModal) {
             NewArchiveView(errorMessage: $errorMessage)
         }
-//        .sheet(isPresented: $presentTest) {
-//            ManageKeyView(keyArchive: keyArchive)
-////                .frame(width: 250, height: 250)
-//        }
-
-        
-//        ArchiveGrid(errorMessage: $errorMessage)
-        
-//        ArchivesView(errorMessage: $errorMessage)
     }
 
 }
-
-//struct Summary_Previews: PreviewProvider {
-//    static var previews: some View {
-//        @State var errorMessage: AlertData? = nil
-//        SummaryView(errorMessage: $errorMessage)
-//    }
-//}
