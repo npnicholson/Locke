@@ -105,6 +105,15 @@ class ArchiveManager: NSObject, ObservableObject {
         try! fm.createDirectory (at: archivesDirectory, withIntermediateDirectories: true, attributes: nil)
         try! fm.createDirectory (at: orphansDirectory, withIntermediateDirectories: true, attributes: nil)
         try! fm.createDirectory (at: mountDirectory, withIntermediateDirectories: true, attributes: nil)
+        try! fm.createDirectory (at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
+        
+        // Make sure the temp directory is empty on startup
+        do {
+            let fileURLs = try fm.contentsOfDirectory(at: tempDirectory, includingPropertiesForKeys: nil)
+            for fileURL in fileURLs {
+                try fm.removeItem(at: fileURL)
+            }
+        } catch  { print(error) }
         
         // Get ArchiveData in CoreData as 'archives'
         let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)
@@ -147,9 +156,10 @@ class ArchiveManager: NSObject, ObservableObject {
             }
         }
         
-//        archives.forEach { archive in
-//            archive.noPassword = false
-//        }
+        // Set all archive's progress flag to denote no ongoing operations
+        archives.forEach { archive in
+            stopOperationProgress(archive: archive)
+        }
         
         if (dataChanged) {
             try! context.save()

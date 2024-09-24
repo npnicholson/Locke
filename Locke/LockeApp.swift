@@ -37,6 +37,7 @@ let directoryURL = appSupportURL.appendingPathComponent("Locke")
 let archivesDirectory = directoryURL.appending(path: "Archives")
 let mountDirectory = directoryURL.appending(path: "Mount")
 let orphansDirectory = directoryURL.appending(path: "Orphans")
+let tempDirectory = directoryURL.appending(path: "Temp")
 
 // Build a fetch request which can be used to access archives in order
 let globalArchiveFetchRequest = NSFetchRequest<ArchiveData>(entityName: "ArchiveData")
@@ -196,6 +197,7 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     public var archiveManager: ArchiveManager!
     public var passwordPromptManager: PasswordPromptManager!
     public var notificationDelegate: NotificationDelegate!
+    public var AWSManager: AWSManager!
     
     override init() {
         super.init()
@@ -215,6 +217,11 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             lockeDelegate: self,
             passwordPromptManager: passwordPromptManager)
         globalEphemeralStorage.archiveManager = archiveManager
+        
+        self.AWSManager = Locke.AWSManager(self);
+        
+        // Attempt to authenticate the AWS manager with stored credentials
+        let _ = self.AWSManager.authenticate()
         
         // MARK: Main Window
         // Make a new NS Window
@@ -265,6 +272,7 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         self.mainWindow.level = NSWindow.Level.init(rawValue: 1)
         
         self.notificationDelegate.start()
+        
     }
     
     @objc func openMainView() {

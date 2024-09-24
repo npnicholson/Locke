@@ -22,6 +22,9 @@
 		A443B32A2A8BCDCB00E3CA2D /* NewArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */; };
 		A44696FC2A8F21E000B23EC4 /* SymbolPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */; };
 		A44696FF2A8F23A900B23EC4 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */; };
+		A44A03662AFB360C00ABC9A5 /* LaunchAtLogin in Frameworks */ = {isa = PBXBuildFile; productRef = A44A03652AFB360C00ABC9A5 /* LaunchAtLogin */; };
+		A44D0EE62CA088BE00F8F41B /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = A44D0EE52CA088BE00F8F41B /* Zip */; };
+		A44D0EE92CA0FAF300F8F41B /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44D0EE82CA0FAF300F8F41B /* CircularProgressView.swift */; };
 		A459C31B2AE8509C003C8A75 /* MenuBarExtraAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A459C31A2AE8509C003C8A75 /* MenuBarExtraAccess */; };
 		A459C31D2AF01DFD003C8A75 /* Recover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459C31C2AF01DFD003C8A75 /* Recover.swift */; };
 		A459C31F2AF29A2E003C8A75 /* Generate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A459C31E2AF29A2E003C8A75 /* Generate.swift */; };
@@ -41,6 +44,9 @@
 		A4A5A8622A9FB89800800559 /* Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8612A9FB89800800559 /* Create.swift */; };
 		A4A5A8642A9FB96000800559 /* Show.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8632A9FB96000800559 /* Show.swift */; };
 		A4A5A8662A9FD63100800559 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A5A8652A9FD63100800559 /* Keychain.swift */; };
+		A4B3DC262BB9BD0C00E5AD60 /* AWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B3DC252BB9BD0C00E5AD60 /* AWS.swift */; };
+		A4B3DC292BB9BF7D00E5AD60 /* SotoS3 in Frameworks */ = {isa = PBXBuildFile; productRef = A4B3DC282BB9BF7D00E5AD60 /* SotoS3 */; };
+		A4B3DC2C2BB9C60A00E5AD60 /* SotoS3FileTransfer in Frameworks */ = {isa = PBXBuildFile; productRef = A4B3DC2B2BB9C60A00E5AD60 /* SotoS3FileTransfer */; };
 		A4C572052ADDDAD4001C2CAA /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572042ADDDAD4001C2CAA /* Logger.swift */; };
 		A4C572072ADDEC09001C2CAA /* ConsoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572062ADDEC09001C2CAA /* ConsoleView.swift */; };
 		A4C572092ADDFB74001C2CAA /* ArchiveWatchdog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */; };
@@ -66,6 +72,7 @@
 		A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		A443B3292A8BCDCB00E3CA2D /* NewArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewArchiveView.swift; sourceTree = "<group>"; };
 		A44696FB2A8F21E000B23EC4 /* SymbolPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolPicker.swift; sourceTree = "<group>"; };
+		A44D0EE82CA0FAF300F8F41B /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		A459C31C2AF01DFD003C8A75 /* Recover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recover.swift; sourceTree = "<group>"; };
 		A459C31E2AF29A2E003C8A75 /* Generate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Generate.swift; sourceTree = "<group>"; };
 		A459C3202AF48C3A003C8A75 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
@@ -85,6 +92,7 @@
 		A4A5A8612A9FB89800800559 /* Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Create.swift; sourceTree = "<group>"; };
 		A4A5A8632A9FB96000800559 /* Show.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Show.swift; sourceTree = "<group>"; };
 		A4A5A8652A9FD63100800559 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		A4B3DC252BB9BD0C00E5AD60 /* AWS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWS.swift; sourceTree = "<group>"; };
 		A4C572042ADDDAD4001C2CAA /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		A4C572062ADDEC09001C2CAA /* ConsoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleView.swift; sourceTree = "<group>"; };
 		A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveWatchdog.swift; sourceTree = "<group>"; };
@@ -97,8 +105,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A44D0EE62CA088BE00F8F41B /* Zip in Frameworks */,
+				A4B3DC2C2BB9C60A00E5AD60 /* SotoS3FileTransfer in Frameworks */,
+				A4B3DC292BB9BF7D00E5AD60 /* SotoS3 in Frameworks */,
 				A4F67A462ADDB3EB00999DA8 /* FilePicker in Frameworks */,
 				A459C31B2AE8509C003C8A75 /* MenuBarExtraAccess in Frameworks */,
+				A44A03662AFB360C00ABC9A5 /* LaunchAtLogin in Frameworks */,
 				A44696FF2A8F23A900B23EC4 /* SFSafeSymbols in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -158,6 +170,7 @@
 				A42254A82A8C7DF300C156AF /* Shake.swift */,
 				A4A5A84E2A9FAB7600800559 /* File.swift */,
 				A4A5A8652A9FD63100800559 /* Keychain.swift */,
+				A4B3DC252BB9BD0C00E5AD60 /* AWS.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -165,6 +178,7 @@
 		A443B31F2A8B0CD800E3CA2D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A44D0EE82CA0FAF300F8F41B /* CircularProgressView.swift */,
 				A443B3222A8B24B200E3CA2D /* ArchivesView.swift */,
 				A443B3272A8BCADA00E3CA2D /* FavoritesView.swift */,
 				A4A5A8482A99452D00800559 /* MenuView.swift */,
@@ -236,6 +250,10 @@
 				A44696FE2A8F23A900B23EC4 /* SFSafeSymbols */,
 				A4F67A452ADDB3EB00999DA8 /* FilePicker */,
 				A459C31A2AE8509C003C8A75 /* MenuBarExtraAccess */,
+				A44A03652AFB360C00ABC9A5 /* LaunchAtLogin */,
+				A4B3DC282BB9BF7D00E5AD60 /* SotoS3 */,
+				A4B3DC2B2BB9C60A00E5AD60 /* SotoS3FileTransfer */,
+				A44D0EE52CA088BE00F8F41B /* Zip */,
 			);
 			productName = Locke;
 			productReference = A443B3082A8AABBC00E3CA2D /* Locke.app */;
@@ -249,7 +267,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					A443B3072A8AABBC00E3CA2D = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -269,6 +287,11 @@
 				A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
 				A4F67A442ADDB3EB00999DA8 /* XCLocalSwiftPackageReference "../../FilePicker" */,
 				A459C3192AE8509C003C8A75 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */,
+				A44A03642AFB360C00ABC9A5 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */,
+				A4B3DC1E2BB9BA1500E5AD60 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */,
+				A4B3DC272BB9BF7D00E5AD60 /* XCRemoteSwiftPackageReference "soto" */,
+				A4B3DC2A2BB9C60A00E5AD60 /* XCRemoteSwiftPackageReference "soto-s3-file-transfer" */,
+				A44D0EE42CA088BE00F8F41B /* XCRemoteSwiftPackageReference "Zip" */,
 			);
 			productRefGroup = A443B3092A8AABBC00E3CA2D /* Products */;
 			projectDirPath = "";
@@ -323,8 +346,10 @@
 				A4A5A8622A9FB89800800559 /* Create.swift in Sources */,
 				A4A5A8542A9FB20300800559 /* Executors.swift in Sources */,
 				A4C572092ADDFB74001C2CAA /* ArchiveWatchdog.swift in Sources */,
+				A4B3DC262BB9BD0C00E5AD60 /* AWS.swift in Sources */,
 				A4A5A85E2A9FB37F00800559 /* Compact.swift in Sources */,
 				A443B30C2A8AABBC00E3CA2D /* LockeApp.swift in Sources */,
+				A44D0EE92CA0FAF300F8F41B /* CircularProgressView.swift in Sources */,
 				A4A5A8462A97D92700800559 /* Locke.xcdatamodel in Sources */,
 				A4A5A84F2A9FAB7600800559 /* File.swift in Sources */,
 				A4A5A85A2A9FB27900800559 /* Close.swift in Sources */,
@@ -483,7 +508,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Entalon.Locke;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -515,7 +540,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Entalon.Locke;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -562,12 +587,52 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		A44A03642AFB360C00ABC9A5 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/LaunchAtLogin-Modern";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		A44D0EE42CA088BE00F8F41B /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.2;
+			};
+		};
 		A459C3192AE8509C003C8A75 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/orchetect/MenuBarExtraAccess";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.5;
+			};
+		};
+		A4B3DC1E2BB9BA1500E5AD60 /* XCRemoteSwiftPackageReference "aws-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/awslabs/aws-sdk-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		A4B3DC272BB9BF7D00E5AD60 /* XCRemoteSwiftPackageReference "soto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/soto-project/soto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
+		A4B3DC2A2BB9C60A00E5AD60 /* XCRemoteSwiftPackageReference "soto-s3-file-transfer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/soto-project/soto-s3-file-transfer";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -578,10 +643,30 @@
 			package = A44696FD2A8F23A900B23EC4 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
 			productName = SFSafeSymbols;
 		};
+		A44A03652AFB360C00ABC9A5 /* LaunchAtLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A44A03642AFB360C00ABC9A5 /* XCRemoteSwiftPackageReference "LaunchAtLogin-Modern" */;
+			productName = LaunchAtLogin;
+		};
+		A44D0EE52CA088BE00F8F41B /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A44D0EE42CA088BE00F8F41B /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
+		};
 		A459C31A2AE8509C003C8A75 /* MenuBarExtraAccess */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A459C3192AE8509C003C8A75 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */;
 			productName = MenuBarExtraAccess;
+		};
+		A4B3DC282BB9BF7D00E5AD60 /* SotoS3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A4B3DC272BB9BF7D00E5AD60 /* XCRemoteSwiftPackageReference "soto" */;
+			productName = SotoS3;
+		};
+		A4B3DC2B2BB9C60A00E5AD60 /* SotoS3FileTransfer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A4B3DC2A2BB9C60A00E5AD60 /* XCRemoteSwiftPackageReference "soto-s3-file-transfer" */;
+			productName = SotoS3FileTransfer;
 		};
 		A4F67A452ADDB3EB00999DA8 /* FilePicker */ = {
 			isa = XCSwiftPackageProductDependency;

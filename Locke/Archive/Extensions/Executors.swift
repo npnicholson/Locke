@@ -65,7 +65,7 @@ extension ArchiveManager {
         }
         
         // Try to compact the archive
-        let operation = try executeTask(executable: hdiutil, arguments: ["compact", "-stdinpass", "-batteryallowed", bundleURL.path(percentEncoded: false)], inputPipeString: password)
+        let operation = try executeTask(executable: hdiutil, arguments: ["compact", "-stdinpass", "-batteryallowed", "-puppetstrings", bundleURL.path(percentEncoded: false)], inputPipeString: password)
         
         // Log this operation
         logOperation(operation: operation)

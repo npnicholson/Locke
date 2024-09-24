@@ -87,12 +87,21 @@ struct ArchiveContextMenu: View {
         .help(archive.attached ? "" : "Compact archive to recover free space")
         .keyboardShortcut("c")
         
-        Button ("Backup") {
-            archiveManager.backup(archive.objectID)
+        Button ("Backup to disk") {
+            archiveManager.backupToDisk(archive.objectID)
         }
         .disabled(archive.attached)
-        .help(archive.attached ? "" : "Back up the archive")
-        .keyboardShortcut("c")
+        .help(archive.attached ? "" : "Back up the archive to disk")
+        .keyboardShortcut("d")
+        
+        Button ("Backup to AWS") {
+            Task {
+                await archiveManager.backupToAWS(archive.objectID)
+            }
+        }
+        .disabled(archive.attached || !archiveManager.lockeDelegate.AWSManager.isAuthed())
+        .help(archive.attached ? "" : "Back up the archive AWS S3")
+        .keyboardShortcut("a")
         
         Divider()
         Text("Auto Closure")
@@ -162,6 +171,16 @@ struct ArchiveListItemView: View {
                 HStack(spacing: 0) {
                     ArchiveView(archive: archive)
                     Spacer()
+                    
+                    ZStack {
+                        Rectangle()
+                            .fill(.clear)
+                            .contentShape(Rectangle())
+                            .frame(maxWidth: 25, maxHeight: 25)
+                        CircularProgressView(progress: archive.operationProgress, enabled: archive.operationProgress > 0)
+                            .frame(width: 13, height: 13)
+                    }
+                    
                     Button {
                         if (archive.attached) {
                             archiveManager.close(archive.objectID)

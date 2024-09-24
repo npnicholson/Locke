@@ -17,6 +17,39 @@ struct Operation {
     let stderr: String?
 }
 
+// Helper to throttle execution of code
+// See: https://digitalbunker.dev/rate-limiting-on-ios/
+struct ThrottleExecution {
+    private static var previousExecution = Date.distantPast
+    static func execute(minimumInterval: TimeInterval, queue: DispatchQueue, _ block: @escaping () -> Void) {
+        if abs(previousExecution.timeIntervalSinceNow) > minimumInterval {
+            previousExecution = Date()
+            queue.async { block() }
+        }
+    }
+
+}
+
+// Function to update the progress with throttling. This will only allow the code to be
+// executed every 0.3 seconds. All other executions will be discarded
+func updateOperationProgress(archive: ArchiveData, progress: Double) {
+    if (progress == -1 || progress == 0 || progress == 1) {
+        archive.operationProgress = progress
+    } else {
+        ThrottleExecution.execute(minimumInterval: 0.3, queue: .main) {
+            archive.operationProgress = progress
+        }
+    }
+}
+
+func startOperationProgress(archive: ArchiveData) {
+    updateOperationProgress(archive: archive, progress: 0)
+}
+func stopOperationProgress(archive: ArchiveData) {
+    updateOperationProgress(archive: archive, progress: -1)
+}
+
+
 // Execute a command line task
 func executeTask(executable: URL, arguments: [String] = [], inputPipeString: String? = nil) throws -> Operation {
     // Start a new process

@@ -66,7 +66,7 @@ struct StoreKeyView: View {
     @State var keyArchive: ArchiveDataAndKey
     @Environment(\.dismiss) var dismiss
     @State var keyStoreCopy = true
-    @State var keyStoreFile = true
+    @State var keyStoreFile = false
     
     var book: NSDocument = NSDocument()
     

@@ -5,6 +5,10 @@
 //  Created by Norris Nicholson on 8/30/23.
 //
 
+
+// TODO: Look into this library instead: https://github.com/kishikawakatsumi/KeychainAccess
+//       Might allow for TouchID
+
 import Foundation
 import CryptoKit
 
