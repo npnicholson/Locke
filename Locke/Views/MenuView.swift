@@ -52,24 +52,24 @@ struct MenuView: View {
     
     @EnvironmentObject var lockeDelegate: LockeDelegate
     
-//    // Function to set up a fetch request for the list recent archvies. Select archives that are not favorites
-//    // and that have been modified within the last 7 days. Then cap the number of results at 5
-//    static func recentsFetchRequest() -> NSFetchRequest<ArchiveData> {
-//        let request: NSFetchRequest<ArchiveData> = ArchiveData.fetchRequest()
-//        
-//        // Calculate the cuttoff date by subtracting 7 days from todat
-//        let cuttoffDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
-//        
-//        request.fetchLimit = 5
-//        
-//        // Sort by modified date
-//        request.sortDescriptors = [globalArchiveSortDescriptorModified]
-//        
-//        // Apply the search predicate
-//        request.predicate = NSPredicate(format: "favorite == NO AND attached == NO AND modified >= %@", argumentArray: [cuttoffDate])
-//        
-//        return request
-//    }
+    // Function to set up a fetch request for the list recent archvies. Select archives that are not favorites
+    // and that have been modified within the last 7 days. Then cap the number of results at 5
+    static func recentsFetchRequest() -> NSFetchRequest<ArchiveData> {
+        let request: NSFetchRequest<ArchiveData> = ArchiveData.fetchRequest()
+
+        // Calculate the cuttoff date by subtracting 7 days from todat
+        let cuttoffDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
+
+        request.fetchLimit = 5
+
+        // Sort by modified date
+        request.sortDescriptors = [globalArchiveSortDescriptorModified]
+
+        // Apply the search predicate
+        request.predicate = NSPredicate(format: "favorite == NO AND attached == NO AND modified >= %@", argumentArray: [cuttoffDate])
+
+        return request
+    }
     
     // Favorites fetch request. Sorted by defined archive order. Select archives that are favorites
     @FetchRequest( sortDescriptors: [globalArchiveSortDescriptor], predicate: NSPredicate(format: "favorite == YES")
@@ -79,9 +79,9 @@ struct MenuView: View {
     @FetchRequest( sortDescriptors: [globalArchiveSortDescriptor], predicate: NSPredicate(format: "favorite == NO AND attached == YES")
     ) var open: FetchedResults<ArchiveData>
     
-//    // Recents fetch request. Sorted by modified date. Select archives that are not favorites and
-//    // that have been modified within the last 7 days
-//    @FetchRequest(fetchRequest: recentsFetchRequest()) var recents: FetchedResults<ArchiveData>
+    // Recents fetch request. Sorted by modified date. Select archives that are not favorites and
+    // that have been modified within the last 7 days
+    @FetchRequest(fetchRequest: recentsFetchRequest()) var recents: FetchedResults<ArchiveData>
     
     var body: some View {
         if (open.count > 0 ) {
@@ -96,16 +96,20 @@ struct MenuView: View {
                 MenuArchiveButton(archive: archive)
             }
         }
-//        if (recents.count > 0 ) {
-//            Text("Recent Archives")
-//            ForEach(recents) { archive in
-//                MenuArchiveButton(archive: archive)
-//            }
-//        }
-//        if (favorites.count == 0 && recents.count == 0) {
-        if (favorites.count == 0) {
-//            Text("No Favorite or Recent Archives")
-            Text("No Favorite Archives")
+        if (UserDefaults.standard.bool(forKey: "setting.ShowRecentsInMenu") && recents.count > 0 ) {
+            Text("Recent Archives")
+            ForEach(recents) { archive in
+                MenuArchiveButton(archive: archive)
+            }
+        }
+        if (UserDefaults.standard.bool(forKey: "setting.ShowRecentsInMenu")) {
+            if (favorites.count == 0 && recents.count == 0) {
+                Text("No Favorite or Recent Archives")
+            }
+        } else {
+            if (favorites.count == 0) {
+                Text("No Favorite Archives")
+            }
         }
         Divider()
         Button("Show Application") {

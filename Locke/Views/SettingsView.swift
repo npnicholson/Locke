@@ -20,6 +20,8 @@ struct SettingsView: View {
     @AppStorage("setting.AutoEject") private var autoEject = true
     @AppStorage("setting.AutoEjectTimeout") private var autoEjectTimeout = 100
     
+    @AppStorage("setting.ShowRecentsInMenu") private var showRecentsInMenu = true
+    
     @AppStorage("setting.BackupAWSUseDate") private var backupAWSUseDate = false
     
     @AppStorage("setting.AWSAccessKeyId") private var awsAccessKeyId = ""
@@ -35,6 +37,7 @@ struct SettingsView: View {
         HStack {
             VStack (alignment: .leading) {
                 LaunchAtLogin.Toggle()
+                Toggle("Show Recently Accessed Archives in Menu (Requires Restart)", isOn: $showRecentsInMenu)
                 Toggle("Eject all archives on application close", isOn: $ejectOnClose)
                 Toggle("Compact archives when detaching", isOn: $compactOnDetach)
                 Toggle("Auto eject archives", isOn: $autoEject)

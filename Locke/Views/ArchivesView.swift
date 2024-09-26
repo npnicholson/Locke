@@ -87,14 +87,16 @@ struct ArchiveContextMenu: View {
         .help(archive.attached ? "" : "Compact archive to recover free space")
         .keyboardShortcut("c")
         
-        Button ("Backup to disk") {
+        Divider()
+        Text("Backup")
+        Button (" Backup to disk") {
             archiveManager.backupToDisk(archive.objectID)
         }
         .disabled(archive.attached)
         .help(archive.attached ? "" : "Back up the archive to disk")
         .keyboardShortcut("d")
         
-        Button ("Backup to AWS") {
+        Button (" Backup to AWS") {
             Task {
                 await archiveManager.backupToAWS(archive.objectID)
             }
@@ -144,6 +146,10 @@ struct ArchiveContextMenu: View {
         
         Divider()
         
+        Button (archive.favorite ? "Unfavorite" : "Favorite", role: .destructive) {
+            archive.favorite = !archive.favorite
+        }.help(archive.favorite ? "Unfavorite archive" : "Favorite archive")
+        
         Button ("Remove Archive", role: .destructive) {
             presentRemoveArchive = true
         }
@@ -167,6 +173,11 @@ struct ArchiveListItemView: View {
             Rectangle()
                 .fill(.clear)
                 .contentShape(Rectangle())
+                .gesture(TapGesture(count: 2).onEnded {
+                    if (!archive.attached) {
+                        archiveManager.open(archive.objectID)
+                    }
+                })
             VStack {
                 HStack(spacing: 0) {
                     ArchiveView(archive: archive)
@@ -248,8 +259,8 @@ struct ArchivesView: View {
     @Binding var errorMessage: AlertData?
     @State var showFavorites = true
     
-    @Environment(\.managedObjectContext) var moc
     @FetchRequest(sortDescriptors: [globalArchiveSortDescriptor]) var archives: FetchedResults<ArchiveData>
+    @Environment(\.managedObjectContext) var moc
     
     var body: some View {
         VStack {

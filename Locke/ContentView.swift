@@ -35,7 +35,7 @@ func NavLink(_ page: Page) -> some View {
 
 
 struct ContentView: View {
-    @State public var selectedPage: Page? = archivesPage
+    @State public var selectedPage: Page? = favoritesPage
     @State var errorMessage: AlertData? = nil
     @State var presentNewArchiveModal: Bool = false
     @State var isExporting = false
@@ -45,7 +45,11 @@ struct ContentView: View {
     @FetchRequest(sortDescriptors: [globalArchiveSortDescriptor]) var archives: FetchedResults<ArchiveData>
     
     var body: some View {
-        NavigationSplitView {
+        
+        
+        NavigationSplitView(columnVisibility: .constant(.all), sidebar: {
+            Spacer()
+                .frame(minHeight: 15, maxHeight: 15)
             List(selection: $selectedPage) {
                 NavLink(favoritesPage)
                 NavLink(archivesPage)
@@ -53,6 +57,7 @@ struct ContentView: View {
                 NavLink(settingsPage)
             }
             .navigationSplitViewColumnWidth(150)
+            .toolbar(removing: .sidebarToggle)
             
             Spacer()
             Button {
@@ -72,9 +77,8 @@ struct ContentView: View {
                     .padding(.bottom, 14)
                 }
             }
-            .buttonStyle(.borderless)
-            
-        } detail: {
+                .buttonStyle(.borderless)
+        }, detail: {
             if let selectedPage {
                 switch (selectedPage.id) {
                 case favoritesPage.id: FavoritesView(errorMessage: $errorMessage)
@@ -83,7 +87,8 @@ struct ContentView: View {
                 default: Text ("Unknown Selection")
                 }
             }
-        }
+        })
+        .navigationSplitViewStyle(.balanced)
         .sheet(isPresented: $presentNewArchiveModal) {
             NewArchiveView(errorMessage: $errorMessage)
         }
