@@ -146,6 +146,15 @@ struct SettingsView: View {
                     Button("Show Archive Folder") {
                         NSWorkspace.shared.selectFile(archivesDirectory.path(percentEncoded: false), inFileViewerRootedAtPath: "")
                     }
+                    Button("Relaunch Locke") {
+                        let task = Process()
+                        task.launchPath = "/bin/sh"
+                        task.arguments = ["-c", "sleep 1; open \"\(Bundle.main.bundlePath)\""]
+                        task.launch()
+                        
+                        NSApp.terminate(self)
+                        exit(0)
+                    }
                 }
             }
             Spacer()
