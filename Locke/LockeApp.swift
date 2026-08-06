@@ -198,6 +198,9 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     public var passwordPromptManager: PasswordPromptManager!
     public var notificationDelegate: NotificationDelegate!
     public var AWSManager: AWSManager!
+    public var BackblazeManager: BackblazeManager!
+    public var ResticManager: ResticManager!
+    public var UpdateManager: UpdateManager = Locke.UpdateManager()
     
     override init() {
         super.init()
@@ -219,9 +222,13 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         globalEphemeralStorage.archiveManager = archiveManager
         
         self.AWSManager = Locke.AWSManager(self);
-        
-        // Attempt to authenticate the AWS manager with stored credentials
+        self.BackblazeManager = Locke.BackblazeManager(self)
+        self.ResticManager = Locke.ResticManager()
+
+        // Attempt to authenticate the cloud managers with stored credentials
         let _ = self.AWSManager.authenticate()
+        let _ = self.BackblazeManager.authenticate()
+        
         
         // MARK: Main Window
         // Make a new NS Window

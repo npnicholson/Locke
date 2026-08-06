@@ -39,7 +39,7 @@ class PasswordPromptManager: ObservableObject {
         // Create the basic window but do nothing else. The rest of the setup is done in the start() function,
         // which is to be called after the application has finished starting
         self.window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 0, height: 0),
+            contentRect: NSRect(x: 0, y: 0, width: 440, height: 175),
             styleMask: [.fullSizeContentView, .titled],
             backing: .buffered,
             defer: false)
@@ -110,6 +110,7 @@ class PasswordPromptManager: ObservableObject {
     
     // Activate the prompt by showing it to the user
     func activate(_ handler: @escaping (PromptResult, ArchiveData, String, Any?) -> Bool, archive: ArchiveData, title: String? = nil, subtitle: String? = nil, prompt: String? = nil, sleepTimeIfWrong: UInt32? = nil, data: Any? = nil) {
+        
         // Store the handler and archive name from the activating caller
         self.handler = handler
         self.archive = archive
@@ -121,7 +122,7 @@ class PasswordPromptManager: ObservableObject {
         self.data = data
         
         // Show and center the window
-        self.window.level = NSWindow.Level.init(rawValue: 2)
+        self.window.level = NSWindow.Level.init(rawValue: 1)
         self.window.makeKeyAndOrderFront(nil)
         self.window.center()
     }

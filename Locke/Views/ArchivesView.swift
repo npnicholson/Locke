@@ -96,6 +96,15 @@ struct ArchiveContextMenu: View {
         .help(archive.attached ? "" : "Back up the archive to disk")
         .keyboardShortcut("d")
         
+        Button (" Backup with Restic") {
+            Task {
+                await archiveManager.backupToRestic(archive.objectID)
+            }
+        }
+        .disabled(archive.attached || !archiveManager.lockeDelegate.ResticManager.isConfigured())
+        .help(archive.attached ? "" : "Back up the archive using Restic")
+        .keyboardShortcut("r")
+        
         Button (" Backup to AWS") {
             Task {
                 await archiveManager.backupToAWS(archive.objectID)
@@ -104,7 +113,16 @@ struct ArchiveContextMenu: View {
         .disabled(archive.attached || !archiveManager.lockeDelegate.AWSManager.isAuthed())
         .help(archive.attached ? "" : "Back up the archive AWS S3")
         .keyboardShortcut("a")
-        
+
+        Button (" Backup to Backblaze") {
+            Task {
+                await archiveManager.backupToBackblaze(archive.objectID)
+            }
+        }
+        .disabled(archive.attached || !archiveManager.lockeDelegate.BackblazeManager.isAuthed())
+        .help(archive.attached ? "" : "Back up the archive to Backblaze B2")
+        .keyboardShortcut("b")
+
         Divider()
         Text("Auto Closure")
         Button (" Schedule Closure") {

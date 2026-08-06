@@ -11,6 +11,7 @@
 		A42254A92A8C7DF300C156AF /* Shake.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254A82A8C7DF300C156AF /* Shake.swift */; };
 		A42254AB2A8C833700C156AF /* RemoveArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */; };
 		A42254AD2A8D08B600C156AF /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42254AC2A8D08B600C156AF /* Model.swift */; };
+		A43B2BB32CE840B400BF6D89 /* bw in Resources */ = {isa = PBXBuildFile; fileRef = A43B2BB22CE840B400BF6D89 /* bw */; };
 		A443B30C2A8AABBC00E3CA2D /* LockeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B30B2A8AABBC00E3CA2D /* LockeApp.swift */; };
 		A443B30E2A8AABBC00E3CA2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A443B30D2A8AABBC00E3CA2D /* ContentView.swift */; };
 		A443B3102A8AABBD00E3CA2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */; };
@@ -51,6 +52,10 @@
 		A4C572072ADDEC09001C2CAA /* ConsoleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572062ADDEC09001C2CAA /* ConsoleView.swift */; };
 		A4C572092ADDFB74001C2CAA /* ArchiveWatchdog.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */; };
 		A4C5720B2ADF1D3D001C2CAA /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4C5720A2ADF1D3D001C2CAA /* Notification.swift */; };
+		A4DA0E052CA6513200590C4A /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A4DA0E042CA6513200590C4A /* Sparkle */; };
+		A4DA0E072CA651A500590C4A /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4DA0E062CA651A300590C4A /* Updater.swift */; };
+		A4E4C0D62D2A8C1F00C12345 /* Restic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E4C0D52D2A8C1F00C12345 /* Restic.swift */; };
+		A4E4C0E52D2A8C1F00C12346 /* Backblaze.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E4C0E42D2A8C1F00C12346 /* Backblaze.swift */; };
 		A4F67A432ADB500B00999DA8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F67A422ADB500B00999DA8 /* SettingsView.swift */; };
 		A4F67A462ADDB3EB00999DA8 /* FilePicker in Frameworks */ = {isa = PBXBuildFile; productRef = A4F67A452ADDB3EB00999DA8 /* FilePicker */; };
 /* End PBXBuildFile section */
@@ -60,6 +65,7 @@
 		A42254A82A8C7DF300C156AF /* Shake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shake.swift; sourceTree = "<group>"; };
 		A42254AA2A8C833700C156AF /* RemoveArchiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveArchiveView.swift; sourceTree = "<group>"; };
 		A42254AC2A8D08B600C156AF /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		A43B2BB22CE840B400BF6D89 /* bw */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = bw; sourceTree = "<group>"; };
 		A443B3082A8AABBC00E3CA2D /* Locke.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Locke.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A443B30B2A8AABBC00E3CA2D /* LockeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockeApp.swift; sourceTree = "<group>"; };
 		A443B30D2A8AABBC00E3CA2D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -97,6 +103,9 @@
 		A4C572062ADDEC09001C2CAA /* ConsoleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsoleView.swift; sourceTree = "<group>"; };
 		A4C572082ADDFB74001C2CAA /* ArchiveWatchdog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveWatchdog.swift; sourceTree = "<group>"; };
 		A4C5720A2ADF1D3D001C2CAA /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		A4DA0E062CA651A300590C4A /* Updater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
+		A4E4C0D52D2A8C1F00C12345 /* Restic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restic.swift; sourceTree = "<group>"; };
+		A4E4C0E42D2A8C1F00C12346 /* Backblaze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backblaze.swift; sourceTree = "<group>"; };
 		A4F67A422ADB500B00999DA8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -106,6 +115,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A44D0EE62CA088BE00F8F41B /* Zip in Frameworks */,
+				A4DA0E052CA6513200590C4A /* Sparkle in Frameworks */,
 				A4B3DC2C2BB9C60A00E5AD60 /* SotoS3FileTransfer in Frameworks */,
 				A4B3DC292BB9BF7D00E5AD60 /* SotoS3 in Frameworks */,
 				A4F67A462ADDB3EB00999DA8 /* FilePicker in Frameworks */,
@@ -150,6 +160,7 @@
 				A443B30F2A8AABBD00E3CA2D /* Assets.xcassets */,
 				A443B3142A8AABBD00E3CA2D /* Locke.entitlements */,
 				A443B3112A8AABBD00E3CA2D /* Preview Content */,
+				A43B2BB22CE840B400BF6D89 /* bw */,
 			);
 			path = Locke;
 			sourceTree = "<group>";
@@ -165,12 +176,15 @@
 		A443B31A2A8AABE900E3CA2D /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				A4DA0E062CA651A300590C4A /* Updater.swift */,
 				A443B31D2A8AAC4500E3CA2D /* Operation.swift */,
 				A42254A62A8C780D00C156AF /* Visual.swift */,
 				A42254A82A8C7DF300C156AF /* Shake.swift */,
 				A4A5A84E2A9FAB7600800559 /* File.swift */,
 				A4A5A8652A9FD63100800559 /* Keychain.swift */,
 				A4B3DC252BB9BD0C00E5AD60 /* AWS.swift */,
+				A4E4C0D52D2A8C1F00C12345 /* Restic.swift */,
+				A4E4C0E42D2A8C1F00C12346 /* Backblaze.swift */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -254,6 +268,7 @@
 				A4B3DC282BB9BF7D00E5AD60 /* SotoS3 */,
 				A4B3DC2B2BB9C60A00E5AD60 /* SotoS3FileTransfer */,
 				A44D0EE52CA088BE00F8F41B /* Zip */,
+				A4DA0E042CA6513200590C4A /* Sparkle */,
 			);
 			productName = Locke;
 			productReference = A443B3082A8AABBC00E3CA2D /* Locke.app */;
@@ -292,6 +307,7 @@
 				A4B3DC272BB9BF7D00E5AD60 /* XCRemoteSwiftPackageReference "soto" */,
 				A4B3DC2A2BB9C60A00E5AD60 /* XCRemoteSwiftPackageReference "soto-s3-file-transfer" */,
 				A44D0EE42CA088BE00F8F41B /* XCRemoteSwiftPackageReference "Zip" */,
+				A4DA0E032CA6513200590C4A /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = A443B3092A8AABBC00E3CA2D /* Products */;
 			projectDirPath = "";
@@ -308,6 +324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A443B3132A8AABBD00E3CA2D /* Preview Assets.xcassets in Resources */,
+				A43B2BB32CE840B400BF6D89 /* bw in Resources */,
 				A443B3102A8AABBD00E3CA2D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,6 +357,7 @@
 				A4A5A8662A9FD63100800559 /* Keychain.swift in Sources */,
 				A4A5A8602A9FB78D00800559 /* Remove.swift in Sources */,
 				A4A5A8642A9FB96000800559 /* Show.swift in Sources */,
+				A4DA0E072CA651A500590C4A /* Updater.swift in Sources */,
 				A459C31D2AF01DFD003C8A75 /* Recover.swift in Sources */,
 				A459C3212AF48C3A003C8A75 /* Backup.swift in Sources */,
 				A4C5720B2ADF1D3D001C2CAA /* Notification.swift in Sources */,
@@ -347,6 +365,8 @@
 				A4A5A8542A9FB20300800559 /* Executors.swift in Sources */,
 				A4C572092ADDFB74001C2CAA /* ArchiveWatchdog.swift in Sources */,
 				A4B3DC262BB9BD0C00E5AD60 /* AWS.swift in Sources */,
+				A4E4C0D62D2A8C1F00C12345 /* Restic.swift in Sources */,
+				A4E4C0E52D2A8C1F00C12346 /* Backblaze.swift in Sources */,
 				A4A5A85E2A9FB37F00800559 /* Compact.swift in Sources */,
 				A443B30C2A8AABBC00E3CA2D /* LockeApp.swift in Sources */,
 				A44D0EE92CA0FAF300F8F41B /* CircularProgressView.swift in Sources */,
@@ -637,6 +657,14 @@
 				minimumVersion = 1.3.0;
 			};
 		};
+		A4DA0E032CA6513200590C4A /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -669,6 +697,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A4B3DC2A2BB9C60A00E5AD60 /* XCRemoteSwiftPackageReference "soto-s3-file-transfer" */;
 			productName = SotoS3FileTransfer;
+		};
+		A4DA0E042CA6513200590C4A /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A4DA0E032CA6513200590C4A /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		A4F67A452ADDB3EB00999DA8 /* FilePicker */ = {
 			isa = XCSwiftPackageProductDependency;
