@@ -52,14 +52,14 @@ extension ArchiveManager {
         guard let source = archive.bundleURL else { return }
         
         var dateString = ""
-        if (UserDefaults.standard.bool(forKey: "setting.BackupAWSUseDate")) {
+        if (UserDefaults.standard.bool(.backupUseDate)) {
             let date = Date()
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd"
             dateString = "-" + df.string(from: date)
         }
         
-        guard let awsS3ResourcePath = UserDefaults.standard.string(forKey: "setting.AWSS3ResourcePath") else { return }
+        let awsS3ResourcePath = UserDefaults.standard.trimmedString(.awsS3ResourcePath)
         if (awsS3ResourcePath.isEmpty) { return }
         
         let zipLocation = tempDirectory.appending(path: "\(id).zip")
@@ -101,14 +101,14 @@ extension ArchiveManager {
         guard let source = archive.bundleURL else { return }
 
         var dateString = ""
-        if (UserDefaults.standard.bool(forKey: "setting.BackupAWSUseDate")) {
+        if (UserDefaults.standard.bool(.backupUseDate)) {
             let date = Date()
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd"
             dateString = "-" + df.string(from: date)
         }
 
-        guard let resourcePath = UserDefaults.standard.string(forKey: "setting.BackblazeResourcePath") else { return }
+        let resourcePath = UserDefaults.standard.trimmedString(.backblazeResourcePath)
         if (resourcePath.isEmpty) { return }
 
         let zipLocation = tempDirectory.appending(path: "\(id).zip")
@@ -149,25 +149,25 @@ extension ArchiveManager {
         }
         guard let bundleURL = archive.bundleURL else { return }
         
-        let repository = (UserDefaults.standard.string(forKey: "setting.ResticRepositoryURL") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let repository = UserDefaults.standard.trimmedString(.resticRepositoryURL)
         if repository.isEmpty {
             logger.error("Restic repository URL is not configured")
             return
         }
         
-        let account = (UserDefaults.standard.string(forKey: "setting.ResticKeychainAccount") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let account = UserDefaults.standard.trimmedString(.resticKeychainAccount)
         if account.isEmpty {
             logger.error("Restic keychain account is not configured")
             return
         }
         
-        let extraTagsString = UserDefaults.standard.string(forKey: "setting.ResticExtraTags") ?? ""
+        let extraTagsString = UserDefaults.standard.trimmedString(.resticExtraTags)
         let extraTags = extraTagsString
             .split(separator: ",")
             .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
         
-        let binaryPath = UserDefaults.standard.string(forKey: "setting.ResticExecutablePath")
+        let binaryPath = UserDefaults.standard.trimmedString(.resticExecutablePath)
         let tags = resticTags(for: archive, extraTags: extraTags)
         let hostname = Host.current().localizedName
         

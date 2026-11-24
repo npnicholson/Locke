@@ -67,12 +67,14 @@ class BackblazeManager {
 
         self.authenticated = false
 
-        guard let keyId = UserDefaults.standard.string(forKey: "setting.BackblazeKeyId"), !keyId.isEmpty else {
+        let keyId = UserDefaults.standard.trimmedString(.backblazeKeyId)
+        guard !keyId.isEmpty else {
             logger.error("Backblaze Authentication Error. Backblaze Key ID not set")
             return false
         }
 
-        guard let rawEndpoint = UserDefaults.standard.string(forKey: "setting.BackblazeEndpoint"), !rawEndpoint.isEmpty else {
+        let rawEndpoint = UserDefaults.standard.trimmedString(.backblazeEndpoint)
+        guard !rawEndpoint.isEmpty else {
             logger.error("Backblaze Authentication Error. Backblaze endpoint not set")
             return false
         }

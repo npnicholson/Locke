@@ -72,9 +72,9 @@ final class ResticManager: @unchecked Sendable {
     }
     
     func isConfigured() -> Bool {
-        let repository = (UserDefaults.standard.string(forKey: "setting.ResticRepositoryURL") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let repository = UserDefaults.standard.trimmedString(.resticRepositoryURL)
         if repository.isEmpty { return false }
-        let account = (UserDefaults.standard.string(forKey: "setting.ResticKeychainAccount") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let account = UserDefaults.standard.trimmedString(.resticKeychainAccount)
         if account.isEmpty { return false }
         return (try? Keychain.readPassword(service: ResticManager.keychainService, account: account)) != nil
     }

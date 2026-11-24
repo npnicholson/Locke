@@ -16,26 +16,26 @@ private enum Tabs: Hashable {
 struct SettingsView: View {
     @Binding var errorMessage: AlertData?
     
-    @AppStorage("setting.EjectOnClose") private var ejectOnClose = true
-    @AppStorage("setting.CompactOnDetach") private var compactOnDetach = true
-    @AppStorage("setting.AutoEject") private var autoEject = true
-    @AppStorage("setting.AutoEjectTimeout") private var autoEjectTimeout = 100
+    @AppStorage(.ejectOnClose) private var ejectOnClose = true
+    @AppStorage(.compactOnDetach) private var compactOnDetach = true
+    @AppStorage(.autoEject) private var autoEject = true
+    @AppStorage(.autoEjectTimeout) private var autoEjectTimeout = 100
     
-    @AppStorage("setting.ShowRecentsInMenu") private var showRecentsInMenu = true
+    @AppStorage(.showRecentsInMenu) private var showRecentsInMenu = true
     
-    @AppStorage("setting.BackupAWSUseDate") private var backupAWSUseDate = false
+    @AppStorage(.backupUseDate) private var backupAWSUseDate = false
     
-    @AppStorage("setting.AWSAccessKeyId") private var awsAccessKeyId = ""
-    @AppStorage("setting.AWSS3ResourcePath") private var awsS3ResourcePath = ""
+    @AppStorage(.awsAccessKeyId) private var awsAccessKeyId = ""
+    @AppStorage(.awsS3ResourcePath) private var awsS3ResourcePath = ""
 
-    @AppStorage("setting.BackblazeKeyId") private var backblazeKeyId = ""
-    @AppStorage("setting.BackblazeEndpoint") private var backblazeEndpoint = ""
-    @AppStorage("setting.BackblazeResourcePath") private var backblazeResourcePath = ""
+    @AppStorage(.backblazeKeyId) private var backblazeKeyId = ""
+    @AppStorage(.backblazeEndpoint) private var backblazeEndpoint = ""
+    @AppStorage(.backblazeResourcePath) private var backblazeResourcePath = ""
 
-    @AppStorage("setting.ResticRepositoryURL") private var resticRepositoryURL = ""
-    @AppStorage("setting.ResticExecutablePath") private var resticExecutablePath = ""
-    @AppStorage("setting.ResticKeychainAccount") private var resticKeychainAccount = ""
-    @AppStorage("setting.ResticExtraTags") private var resticExtraTags = ""
+    @AppStorage(.resticRepositoryURL) private var resticRepositoryURL = ""
+    @AppStorage(.resticExecutablePath) private var resticExecutablePath = ""
+    @AppStorage(.resticKeychainAccount) private var resticKeychainAccount = ""
+    @AppStorage(.resticExtraTags) private var resticExtraTags = ""
     
     @State var showConsole: Bool = false
     @State private var showKeychainAlert: Bool = false

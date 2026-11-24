@@ -43,10 +43,10 @@ class ArchiveWatchdog {
         }
         
         // Only set up watches if auto eject is enabled
-        if (!UserDefaults.standard.bool(forKey: "setting.AutoEject")) { return }
+        if (!UserDefaults.standard.bool(.autoEject)) { return }
         
         // Grab the timeout setting (convert min from setting to seconds here)
-        let timeout = customDelay ?? UserDefaults.standard.integer(forKey: "setting.AutoEjectTimeout") * 60
+        let timeout = customDelay ?? UserDefaults.standard.integer(.autoEjectTimeout) * 60
         
         // Build a new watchdog for this archive
         let work = DispatchWorkItem(block: {

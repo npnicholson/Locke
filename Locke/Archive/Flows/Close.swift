@@ -26,7 +26,7 @@ extension ArchiveManager {
 
         if let id = archive.id {
             // Attempt to compact the archive
-            if (UserDefaults.standard.bool(forKey: "setting.CompactOnDetach")) {
+            if (UserDefaults.standard.bool(.compactOnDetach)) {
                 if let hash = hash {
                     try? self.executeCompact(archive, password: hash)
                 }

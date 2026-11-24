@@ -51,12 +51,7 @@ class AWSManager {
         }
         
         // Grab the timeout setting (convert min from setting to seconds here)
-        guard let accessKeyId = UserDefaults.standard.string(forKey: "setting.AWSAccessKeyId") else {
-            logger.error("AWS Authention Error. Error getting AWS Access Key ID from settings")
-            self.authenticated = false
-            return false
-        }
-        
+        let accessKeyId = UserDefaults.standard.trimmedString(.awsAccessKeyId)
         if (accessKeyId.isEmpty) {
             logger.error("AWS Authention Error. AWS Access Key ID not set")
             self.authenticated = false

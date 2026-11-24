@@ -51,6 +51,7 @@ struct MenuArchiveButton: View {
 struct MenuView: View {
     
     @EnvironmentObject var lockeDelegate: LockeDelegate
+    @AppStorage(.showRecentsInMenu) private var showRecentsInMenu = true
     
     // Function to set up a fetch request for the list recent archvies. Select archives that are not favorites
     // and that have been modified within the last 7 days. Then cap the number of results at 5
@@ -96,13 +97,13 @@ struct MenuView: View {
                 MenuArchiveButton(archive: archive)
             }
         }
-        if (UserDefaults.standard.bool(forKey: "setting.ShowRecentsInMenu") && recents.count > 0 ) {
+        if (showRecentsInMenu && recents.count > 0 ) {
             Text("Recent Archives")
             ForEach(recents) { archive in
                 MenuArchiveButton(archive: archive)
             }
         }
-        if (UserDefaults.standard.bool(forKey: "setting.ShowRecentsInMenu")) {
+        if (showRecentsInMenu) {
             if (favorites.count == 0 && recents.count == 0) {
                 Text("No Favorite or Recent Archives")
             }

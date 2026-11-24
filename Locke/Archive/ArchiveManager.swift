@@ -163,7 +163,7 @@ class ArchiveManager: NSObject, ObservableObject {
     
     // To be called before the application terminates. This closes all of the archives
     public func end() {
-        if (UserDefaults.standard.bool(forKey: "setting.EjectOnClose")) {
+        if (UserDefaults.standard.bool(.ejectOnClose)) {
             
             // Get ArchiveData in CoreData as 'archives'
             let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)

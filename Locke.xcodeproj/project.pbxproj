@@ -54,6 +54,7 @@
 		A4E4C0D62D2A8C1F00C12345 /* Restic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E4C0D52D2A8C1F00C12345 /* Restic.swift */; };
 		A4E4C0E52D2A8C1F00C12346 /* Backblaze.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E4C0E42D2A8C1F00C12346 /* Backblaze.swift */; };
 		A4F67A432ADB500B00999DA8 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F67A422ADB500B00999DA8 /* SettingsView.swift */; };
+		403ED75147243DD315D63B3F /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B6FF752360BB6E2361592D /* Settings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -100,6 +101,7 @@
 		A4E4C0D52D2A8C1F00C12345 /* Restic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restic.swift; sourceTree = "<group>"; };
 		A4E4C0E42D2A8C1F00C12346 /* Backblaze.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backblaze.swift; sourceTree = "<group>"; };
 		A4F67A422ADB500B00999DA8 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		30B6FF752360BB6E2361592D /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +169,7 @@
 		A443B31A2A8AABE900E3CA2D /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				30B6FF752360BB6E2361592D /* Settings.swift */,
 				A4DA0E062CA651A300590C4A /* Updater.swift */,
 				A443B31D2A8AAC4500E3CA2D /* Operation.swift */,
 				A42254A62A8C780D00C156AF /* Visual.swift */,
@@ -322,6 +325,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				403ED75147243DD315D63B3F /* Settings.swift in Sources */,
 				A443B32A2A8BCDCB00E3CA2D /* NewArchiveView.swift in Sources */,
 				A443B30E2A8AABBC00E3CA2D /* ContentView.swift in Sources */,
 				A42254A92A8C7DF300C156AF /* Shake.swift in Sources */,

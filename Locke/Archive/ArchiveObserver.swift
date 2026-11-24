@@ -104,7 +104,7 @@ class ArchiveObserver {
                         self.manager.watchdog.unwatch(archive: archive)
                         
                         // Compact it if required
-                        if (UserDefaults.standard.bool(forKey: "setting.CompactOnDetach")) {
+                        if (UserDefaults.standard.bool(.compactOnDetach)) {
                             if let id = archive.id, let hash = self.manager.openArchives[id] {
                                 logger.trace("Compacting Archive from Observer")
                                 try? self.manager.executeCompact(archive, password: hash)

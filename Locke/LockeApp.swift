@@ -123,6 +123,10 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     
     override init() {
         super.init()
+
+        // Make sure settings read through UserDefaults match the defaults shown in Settings.
+        // Must happen before any manager reads a setting
+        SettingsKey.registerDefaults()
         
         // Apply a sort to the global archive fetch request
         globalArchiveFetchRequest.sortDescriptors = [globalArchiveSortDescriptor]
