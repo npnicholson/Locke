@@ -98,10 +98,11 @@ struct StoreKeyView: View {
                 } label: {
                     Text("Submit")
                         .font(.system(.body, design: .rounded))
-                        .frame(width: 80, height: 20)
-                        .cornerRadius(5)
+                        .frame(width: 80)
                 }
+                .buttonStyle(.glassProminent)
                 .keyboardShortcut(.defaultAction)
+                .controlSize(.large)
             }
         }
         .frame(minWidth: 350, maxWidth: 350, minHeight: 160, maxHeight: 160)
@@ -222,9 +223,9 @@ struct NewArchiveDataEntry: View {
                 } label: {
                     Text("Cancel")
                         .font(.system(.body, design: .rounded))
-                        .frame(width: 80, height: 20)
-                        .cornerRadius(5)
+                        .frame(width: 80)
                 }
+                .buttonStyle(.glass)
                 .keyboardShortcut(.cancelAction)
                 
                 Button {
@@ -242,15 +243,16 @@ struct NewArchiveDataEntry: View {
                 } label: {
                     Text(creating ? "Loading" : "Create")
                         .font(.system(.body, design: .rounded))
-                        .frame(width: 80, height: 20)
-                        .cornerRadius(5)
+                        .frame(width: 80)
                 }
+                .buttonStyle(.glassProminent)
                 .keyboardShortcut(.defaultAction)
+                .disabled(!newArchiveViewModel.validated)
             }
+            .controlSize(.large)
         }
         .padding()
         .frame(minWidth: 260, maxWidth: 260, minHeight: 360, maxHeight: 450)
-        .background(.clear)
         .onAppear(perform: {
             self.newArchiveViewModel.archiveNames = archives.map({ ($0 as ArchiveData).name ?? "unknown" })
         })

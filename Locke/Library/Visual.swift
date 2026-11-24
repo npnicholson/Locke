@@ -166,8 +166,6 @@ struct FormField: View {
                 .font(.system(size: 15, weight: .regular, design: .monospaced))
                 .padding(.horizontal)
             Divider()
-            .frame(height: 1)
-            .background(Color(red: 240/255, green: 240/255, blue: 240/255))
             .padding(.horizontal)
         }
     }
@@ -201,8 +199,6 @@ struct SecureFormField: View {
                 }.buttonStyle(.plain)
             }.padding(.horizontal)
             Divider()
-            .frame(height: 1)
-            .background(Color(red: 240/255, green: 240/255, blue: 240/255))
             .padding(.horizontal)
         }
     }

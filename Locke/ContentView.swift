@@ -48,36 +48,25 @@ struct ContentView: View {
         
         
         NavigationSplitView(columnVisibility: .constant(.all), sidebar: {
-            Spacer()
-                .frame(minHeight: 15, maxHeight: 15)
             List(selection: $selectedPage) {
                 NavLink(favoritesPage)
                 NavLink(archivesPage)
                 Divider()
                 NavLink(settingsPage)
             }
-            .navigationSplitViewColumnWidth(150)
+            .navigationSplitViewColumnWidth(170)
             .toolbar(removing: .sidebarToggle)
-            
-            Spacer()
-            Button {
-                presentNewArchiveModal = true
-            } label: {
-                ZStack {
-                    Rectangle()
-                        .fill(.clear)
-                        .contentShape(Rectangle())
-                        .frame(maxHeight: 35)
-                    Label(title: {
-                        Text("New Archive")
-                    }, icon: {
-                        Image(systemName: SFSymbol.plusApp.rawValue)
-                    })
-                    .padding(.top, 10)
-                    .padding(.bottom, 14)
+            .safeAreaInset(edge: .bottom) {
+                Button {
+                    presentNewArchiveModal = true
+                } label: {
+                    Label("New Archive", systemImage: SFSymbol.plus.rawValue)
+                        .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(.glass)
+                .controlSize(.large)
+                .padding(10)
             }
-                .buttonStyle(.borderless)
         }, detail: {
             if let selectedPage {
                 switch (selectedPage.id) {
@@ -95,7 +84,6 @@ struct ContentView: View {
         .alert(item: $errorMessage) { data in
             Alert(title: Text(data.title), message: Text(data.message), dismissButton: .cancel(Text("Dismiss")))
         }
-        .background(colorScheme == .dark ? Color(NSColor.underPageBackgroundColor) : .white)
         .frame(minWidth: 550, maxWidth: .infinity, minHeight: 200, maxHeight: .infinity)
     }
 }

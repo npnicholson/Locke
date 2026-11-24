@@ -50,44 +50,27 @@ struct SettingsView: View {
     @EnvironmentObject var lockeDelegate: LockeDelegate
     
     var body: some View {
-        HStack {
-            VStack (alignment: .leading) {
+        Form {
+            Section("General") {
                 LaunchAtLogin.Toggle()
                 Toggle("Show Recently Accessed Archives in Menu (Requires Restart)", isOn: $showRecentsInMenu)
                 Toggle("Eject all archives on application close", isOn: $ejectOnClose)
                 Toggle("Compact archives when detaching", isOn: $compactOnDetach)
                 Toggle("Auto eject archives", isOn: $autoEject)
                 if (autoEject) {
-                    HStack {
-                        HStack {
-                            Text("Timeout (minutes): \(autoEjectTimeout)")
-                            Spacer()
-                        }
-                        Slider(value: .convert(from: $autoEjectTimeout), in: 1...480) {
-                        } minimumValueLabel: {
-                            Text("1")
-                        } maximumValueLabel: {
-                            Text("480")
-                        }
+                    Slider(value: .convert(from: $autoEjectTimeout), in: 1...480) {
+                        Text("Timeout (minutes): \(autoEjectTimeout)")
+                    } minimumValueLabel: {
+                        Text("1")
+                    } maximumValueLabel: {
+                        Text("480")
                     }
                 }
-                Divider()
-                Text("AWS Options")
+            }
+            Section {
                 Toggle("Use date in cloud backup name", isOn: $backupAWSUseDate)
-                HStack {
-                    Text("AWS Access Key ID")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("SomeAccessKeyId", text: $awsAccessKeyId)
-                }
-                HStack {
-                    Text("AWS S3 Resource Path")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("s3://amu-backups/someone", text: $awsS3ResourcePath)
-                }
+                TextField("AWS Access Key ID", text: $awsAccessKeyId, prompt: Text("SomeAccessKeyId"))
+                TextField("AWS S3 Resource Path", text: $awsS3ResourcePath, prompt: Text("s3://amu-backups/someone"))
                 Text("The Access Key should include S3 write permissions for the S3 Resource Path.")
                     .font(.callout)
                     .fontWeight(.regular)
@@ -141,29 +124,13 @@ struct SettingsView: View {
                         )
                     }
                 }
-                Divider()
-                Text("Backblaze Options")
-                HStack {
-                    Text("Backblaze Key ID")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("004abc...", text: $backblazeKeyId)
-                }
-                HStack {
-                    Text("Backblaze S3 Endpoint")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("s3.us-west-004.backblazeb2.com", text: $backblazeEndpoint)
-                }
-                HStack {
-                    Text("Backblaze Resource Path")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("s3://my-bucket/locke", text: $backblazeResourcePath)
-                }
+            } header: {
+                Text("AWS")
+            }
+            Section {
+                TextField("Backblaze Key ID", text: $backblazeKeyId, prompt: Text("004abc..."))
+                TextField("Backblaze S3 Endpoint", text: $backblazeEndpoint, prompt: Text("s3.us-west-004.backblazeb2.com"))
+                TextField("Backblaze Resource Path", text: $backblazeResourcePath, prompt: Text("s3://my-bucket/locke"))
                 Text("The Application Key should include write permissions for the bucket. The 'Use date in cloud backup name' setting above applies here as well.")
                     .font(.callout)
                     .fontWeight(.regular)
@@ -217,36 +184,14 @@ struct SettingsView: View {
                         )
                     }
                 }
-                Divider()
-                Text("Restic Options")
-                HStack {
-                    Text("Repository URL")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("sftp:user@host:/backups/locke", text: $resticRepositoryURL)
-                }
-                HStack {
-                    Text("Restic Executable Path")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("/opt/homebrew/bin/restic", text: $resticExecutablePath)
-                }
-                HStack {
-                    Text("Keychain Account")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("restic@example.com", text: $resticKeychainAccount)
-                }
-                HStack {
-                    Text("Extra Tags (comma separated)")
-                        .font(.callout)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                    TextField("team,region", text: $resticExtraTags)
-                }
+            } header: {
+                Text("Backblaze")
+            }
+            Section {
+                TextField("Repository URL", text: $resticRepositoryURL, prompt: Text("sftp:user@host:/backups/locke"))
+                TextField("Restic Executable Path", text: $resticExecutablePath, prompt: Text("/opt/homebrew/bin/restic"))
+                TextField("Keychain Account", text: $resticKeychainAccount, prompt: Text("restic@example.com"))
+                TextField("Extra Tags (comma separated)", text: $resticExtraTags, prompt: Text("team,region"))
                 Text("Restic passwords are stored in Keychain under the service '\(ResticManager.keychainService)'. Update the entry with the correct password after creating it.")
                     .font(.callout)
                     .fontWeight(.regular)
@@ -290,9 +235,11 @@ struct SettingsView: View {
                         )
                     }
                 }
-                Spacer()
+            } header: {
+                Text("Restic")
+            }
+            Section {
                 HStack {
-                    Spacer()
                     Text("\(Bundle.main.appName) Version \(Bundle.main.appVersionLong)")
                         .font(.callout)
                         .fontWeight(.regular)
@@ -323,9 +270,9 @@ struct SettingsView: View {
                     }
                 }
             }
-            Spacer()
         }
-        .padding(20)
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $showConsole) {
             ConsoleView()

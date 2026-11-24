@@ -226,7 +226,7 @@ struct ArchiveListItemView: View {
                                 .frame(width: 15)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     .help(archive.attached ? "Lock archive" : "Unlock archive")
                     
                     
@@ -244,7 +244,7 @@ struct ArchiveListItemView: View {
                             }
                             
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
                         .help(archive.favorite ? "Unfavorite archive" : "Favorite archive")
                     }
                     Menu {
@@ -258,7 +258,9 @@ struct ArchiveListItemView: View {
                             Image(systemSymbol: SFSymbol.line3Horizontal)
                         }
                     }
-                    .buttonStyle(.plain)
+                    .menuStyle(.button)
+                    .buttonStyle(.borderless)
+                    .menuIndicator(.hidden)
                 }
             }
         }

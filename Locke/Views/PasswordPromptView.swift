@@ -34,6 +34,7 @@ class PasswordPromptManager: ObservableObject {
     
     // Private vars for the window and storage objects
     private let window: NSWindow
+    private var hostingView: NSView?
     
     init() {
         // Create the basic window but do nothing else. The rest of the setup is done in the start() function,
@@ -79,19 +80,17 @@ class PasswordPromptManager: ObservableObject {
         // as far as MacOS is consurned
         self.window.setFrameAutosaveName("PromptView")
         
-        // Prep the blury background visual effect
-        let visualEffect = NSVisualEffectView()
-        visualEffect.blendingMode = .behindWindow
-        visualEffect.state = .active
-        visualEffect.material = .fullScreenUI
-        visualEffect.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Apply the two views to the content view. This is a hacky way of doing this but the
-        // best I could do after hours of work
-        let pv = NSHostingView(rootView: promptView)
-        self.window.contentView = pv
-        addSubview(subView: pv, toView: visualEffect)
-        self.window.contentView = visualEffect
+        // Let the Liquid Glass background show through: the window itself draws nothing
+        self.window.isOpaque = false
+        self.window.backgroundColor = .clear
+
+        // Host the SwiftUI prompt inside a Liquid Glass view that fills the window
+        let glass = NSGlassEffectView()
+        glass.cornerRadius = 20
+        let hostingView = NSHostingView(rootView: promptView)
+        self.hostingView = hostingView
+        glass.contentView = hostingView
+        self.window.contentView = glass
     }
     
     // Function which is called when the prompt has finished (cancel or submit). This runs the
@@ -124,6 +123,22 @@ class PasswordPromptManager: ObservableObject {
         // Show and center the window
         self.window.level = NSWindow.Level.init(rawValue: 1)
         self.window.makeKeyAndOrderFront(nil)
+        self.window.center()
+
+        // The title/subtitle/prompt text varies, so fit the window to the content once SwiftUI has
+        // picked up the new values (published changes land on the next run loop pass)
+        DispatchQueue.main.async {
+            self.fitWindowToContent()
+        }
+    }
+
+    // Resize the window so it hugs the SwiftUI content, keeping the window centered
+    private func fitWindowToContent() {
+        guard let hostingView = self.hostingView else { return }
+        hostingView.layoutSubtreeIfNeeded()
+        let size = hostingView.fittingSize
+        guard size.width > 0, size.height > 0 else { return }
+        self.window.setContentSize(size)
         self.window.center()
     }
     
@@ -176,8 +191,7 @@ struct PasswordPromptView: View {
         HStack (alignment: .top) {
             VStack {
                 Image(systemSymbol: SFSymbol.lockRectangleStack)
-                    .foregroundColor(.black)
-                    .opacity(0.4)
+                    .foregroundStyle(.secondary)
                     .font(.system(size: 50))
                     .frame(width: 70, height: 70)
                 Spacer()
@@ -218,28 +232,25 @@ struct PasswordPromptView: View {
                     } label: {
                         Text("Cancel")
                             .font(.system(.body, design: .rounded))
-                            .frame(width: 80, height: 20)
-//                            .background(Color(.init(red: 93/255, green: 98/255, blue: 103/255, alpha: 0.5)))
-                            .cornerRadius(5)
+                            .frame(width: 80)
                     }
-//                    .buttonStyle(.plain)
+                    .buttonStyle(.glass)
                     .keyboardShortcut(.cancelAction)
-                    
+
                     Button {
                         self.submit()
                     } label: {
                         Text("Submit")
                             .font(.system(.body, design: .rounded))
-                            .frame(width: 80, height: 20)
-//                            .background(Color(.init(red: 93/255, green: 98/255, blue: 103/255, alpha: 0.5)))
-                            .cornerRadius(5)
+                            .frame(width: 80)
                     }
-//                    .buttonStyle(.plain)
+                    .buttonStyle(.glassProminent)
                     .keyboardShortcut(.defaultAction)
                 }
-                Spacer()
+                .controlSize(.large)
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
         .frame(width: 400)
         .padding(.horizontal)
         .padding(.bottom)

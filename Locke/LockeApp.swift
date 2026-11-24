@@ -260,9 +260,17 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             .environmentObject(self.archiveManager)
             .environmentObject(self)
         
-        // Apply the view and controller based on the SwiftUI View
-        self.mainWindow.contentViewController = NSHostingController(rootView: mainView)
-        self.mainWindow.contentView = NSHostingView(rootView: mainView)
+        // Host the SwiftUI view in a controller and let SwiftUI drive the window's toolbar and title.
+        // Only the minimum size is taken from SwiftUI so the autosaved frame is not overridden.
+        let hostingController = NSHostingController(rootView: mainView)
+        hostingController.sizingOptions = [.minSize]
+        hostingController.sceneBridgingOptions = [.toolbars]
+        self.mainWindow.contentViewController = hostingController
+
+        // A unified toolbar is what gives the window the macOS 26 Liquid Glass chrome
+        // (larger corner radius and the floating glass sidebar). Without one, the window keeps the older flat look.
+        self.mainWindow.toolbar = NSToolbar(identifier: "MainToolbar")
+        self.mainWindow.toolbarStyle = .unified
         
         // Allows the window to be reopened after being closed
         // @see: https://stackoverflow.com/questions/39385292/why-do-i-get-a-exc-bad-access-when-re-opening-an-nswindow-after-closing-it
@@ -271,10 +279,8 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         // General Settings
         self.mainWindow.center()
         self.mainWindow.setFrameAutosaveName("MainView")
-        self.mainWindow.titlebarAppearsTransparent = true
         self.mainWindow.title = "Locke"
         self.mainWindow.titleVisibility = .visible
-        self.mainWindow.titlebarSeparatorStyle = .none
         self.mainWindow.collectionBehavior = .moveToActiveSpace
         self.mainWindow.level = NSWindow.Level.init(rawValue: 1)
         
