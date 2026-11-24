@@ -164,9 +164,13 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         self.notificationDelegate = NotificationDelegate(lockeDelegate: self, archiveManager: self.archiveManager)
     }
     
-    func applicationWillTerminate(_ notification: Notification) {
-        // End the archive manager
-        self.archiveManager.end()
+    // Ejecting archives runs hdiutil asynchronously, so delay termination until the archive manager is done
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        Task { @MainActor in
+            await self.archiveManager.end()
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
     }
     
     func applicationDidFinishLaunching(_ Notification: Notification) {

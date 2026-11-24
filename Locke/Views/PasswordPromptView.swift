@@ -29,8 +29,10 @@ class PasswordPromptManager: ObservableObject {
     
     public var data: Any?
     
-    // The handler, which should be set by the object which activated the handler
-    public var handler: ((PromptResult, ArchiveData, String, Any?) -> Bool)? = nil
+    // The handler, which should be set by the object which activated the handler. It returns true when
+    // the prompt should close, or false to keep it open (e.g. after a wrong password)
+    public typealias Handler = @MainActor (PromptResult, ArchiveData, String, Any?) async -> Bool
+    public var handler: Handler? = nil
     
     // Private vars for the window and storage objects
     private let window: NSWindow
@@ -96,10 +98,11 @@ class PasswordPromptManager: ObservableObject {
     // Function which is called when the prompt has finished (cancel or submit). This runs the
     // handler if it is set and returns the result back to the prompt so that it can display
     // errors if needed
-    func execute(_ result: PromptResult, password: String = "") -> Bool {
+    @MainActor
+    func execute(_ result: PromptResult, password: String = "") async -> Bool {
         // If the handler has been set, then excecute it
-        if let handler = self.handler {
-            return handler(result, archive, password, self.data)
+        if let handler = self.handler, let archive = self.archive {
+            return await handler(result, archive, password, self.data)
         }
         
         // If there was no handler, then I guess we can call this a success? Otherwise the
@@ -108,7 +111,7 @@ class PasswordPromptManager: ObservableObject {
     }
     
     // Activate the prompt by showing it to the user
-    func activate(_ handler: @escaping (PromptResult, ArchiveData, String, Any?) -> Bool, archive: ArchiveData, title: String? = nil, subtitle: String? = nil, prompt: String? = nil, sleepTimeIfWrong: UInt32? = nil, data: Any? = nil) {
+    func activate(_ handler: @escaping Handler, archive: ArchiveData, title: String? = nil, subtitle: String? = nil, prompt: String? = nil, sleepTimeIfWrong: UInt32? = nil, data: Any? = nil) {
         
         // Store the handler and archive name from the activating caller
         self.handler = handler
@@ -154,37 +157,39 @@ struct PasswordPromptView: View {
     @State var opening: Bool = false
     @State var password: String = ""
     
-    // Function called when this prompt is submitted
+    // Function called when this prompt is submitted. The handler runs asynchronously so the prompt
+    // stays responsive (and shows a spinner) while the archive is opened
     func submit () {
-        // Start the opening progress wheel
+        guard !opening else { return }
         opening = true
         
-        // Run the handler for this button action
-        let success = manager.execute(.submitted, password: password)
-        
-        // Stop the opening progress wheel
-        opening = false
-        
-        // If this was a success, then close the window. Otherwise shake the display and wait
-        // for a new submission
-        if (success) {
-            // Reset the password
-            password = ""
-            // Close the window
-            manager.deactivate()
-        } else {
-            sleep(manager.incorrectSleepTime)
-            shake = true
+        Task { @MainActor in
+            // Run the handler for this button action
+            let success = await manager.execute(.submitted, password: password)
+            
+            // If this was a success, then close the window. Otherwise wait briefly (to slow down
+            // guessing), shake the display and wait for a new submission
+            if (success) {
+                password = ""
+                opening = false
+                manager.deactivate()
+            } else {
+                try? await Task.sleep(for: .seconds(Double(manager.incorrectSleepTime)))
+                opening = false
+                shake = true
+            }
         }
     }
     
     func cancel() {
-        // Run the handler for this button action
-        let _ = manager.execute(.cancelled)
-        // Reset the password
-        password = ""
-        // Close the window
-        manager.deactivate()
+        Task { @MainActor in
+            // Run the handler for this button action
+            _ = await manager.execute(.cancelled)
+            // Reset the password
+            password = ""
+            // Close the window
+            manager.deactivate()
+        }
     }
     
     var body: some View {
@@ -246,6 +251,7 @@ struct PasswordPromptView: View {
                     }
                     .buttonStyle(.glassProminent)
                     .keyboardShortcut(.defaultAction)
+                    .disabled(opening)
                 }
                 .controlSize(.large)
             }

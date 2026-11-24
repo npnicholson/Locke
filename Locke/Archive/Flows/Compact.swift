@@ -10,10 +10,9 @@ import CoreData
 
 // MARK: - Compact Archive Flow
 extension ArchiveManager {
-    // Start the open archive flow with the given archive
+    // Start the compact archive flow with the given archive
     public func compact(_ objectId: NSManagedObjectID) {
-        // Get just the specific archive from CoreData
-        let archive = try! self.context.existingObject(with: objectId) as! ArchiveData
+        guard let archive = self.archive(objectId) else { return }
         
         // The second line prompt of the password prompt dialog
         let prompt = "This will compact the archive and store it back to disk."
@@ -26,7 +25,8 @@ extension ArchiveManager {
     }
     
     // Receive data from the password prompt and compact the archive
-    private func compactHandler(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any) -> Bool {
+    @MainActor
+    private func compactHandler(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any?) async -> Bool {
         if (result == .cancelled) {
             return false
         }
@@ -37,22 +37,26 @@ extension ArchiveManager {
         
         do {
             // Calculate the password for this archive
-            let hashString = Keychain.deriveKey(password: password, archiveId: id)
+            let hashString = try Keychain.deriveKey(password: password, archiveId: id)
             
             // Compact the archive
-            try self.executeCompact(archive, password: hashString)
-            
-            // Update the size of the archive
-            if let bundleURL = archive.bundleURL {
-                archive.size = directorySize(url: bundleURL)
-                try? self.context.save()
-            }
-            
-            // Update the list of active archives
-            self.scanArchiveMounts()
-            return true
+            startOperationProgress(archive: archive)
+            defer { stopOperationProgress(archive: archive) }
+            try await self.executeCompact(archive, password: hashString)
         } catch {
+            // A wrong password also fails here; keep the prompt open so the user can retry
+            logger.error("Unable to compact '\(archive.name ?? "archive")': \(error.localizedDescription)")
             return false
         }
+        
+        // Update the size of the archive
+        if let bundleURL = archive.bundleURL {
+            archive.size = directorySize(url: bundleURL)
+            self.saveContext()
+        }
+        
+        // Update the list of active archives
+        self.scanArchiveMounts()
+        return true
     }
 }

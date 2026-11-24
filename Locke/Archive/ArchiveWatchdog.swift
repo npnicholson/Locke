@@ -51,10 +51,7 @@ class ArchiveWatchdog {
         // Build a new watchdog for this archive
         let work = DispatchWorkItem(block: {
             logger.trace("Closing archive due to timeout (\(timeout) m): \(archive.name ?? "Unknown Archive") / \(archive.id?.uuidString ?? "Unknown Id")")
-            let fetchRequest = NSFetchRequest<ArchiveData>(entityName: "ArchiveData")
-            fetchRequest.predicate = NSPredicate(format: "id == %@", archiveId as CVarArg)
-            
-            if let fetchedArchive: ArchiveData = try? self.manager.context.fetch(fetchRequest).first {
+            if let fetchedArchive = self.manager.archive(id: archiveId) {
                 self.manager.close(fetchedArchive.objectID)
             }
 
@@ -85,7 +82,7 @@ class ArchiveWatchdog {
         archive.watched = true
         
         // Update the context to save the changes to the archive
-        try! self.manager.context.save()
+        self.manager.saveContext()
     }
     
     // Cancel a watchdog on the given archive if it exists
@@ -107,7 +104,7 @@ class ArchiveWatchdog {
             globalNotificationCenter.removeDeliveredNotifications(withIdentifiers: [archiveId.uuidString])
             
             // Update the context to save the changes to the archive
-            try! self.manager.context.save()
+            self.manager.saveContext()
         }
     }
     

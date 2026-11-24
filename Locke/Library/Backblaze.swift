@@ -29,9 +29,9 @@ class BackblazeManager {
     }
 
     deinit {
-        try! self.fileTransferManager?.syncShutdown()
-        try! self.client?.syncShutdown()
-        try! self.threadPool.syncShutdownGracefully()
+        try? self.fileTransferManager?.syncShutdown()
+        try? self.client?.syncShutdown()
+        try? self.threadPool.syncShutdownGracefully()
     }
 
     // Split a Backblaze endpoint into its host and region.
@@ -61,8 +61,12 @@ class BackblazeManager {
     public func authenticate() -> Bool {
         // If we were already authenticated, shut down before re-authenticating
         if (self.authenticated) {
-            try! self.fileTransferManager?.syncShutdown()
-            try! self.client?.syncShutdown()
+            do {
+                try self.fileTransferManager?.syncShutdown()
+                try self.client?.syncShutdown()
+            } catch {
+                logger.error("Backblaze shutdown before re-authenticating failed: \(error.localizedDescription)")
+            }
         }
 
         self.authenticated = false
@@ -110,17 +114,15 @@ class BackblazeManager {
         return true
     }
 
+    // Create a Keychain entry for the key ID. Returns false if one already exists or the save fails
     public func storeCredentials(keyId: String, applicationKey: String) -> Bool {
-        let currentPassword = try? Keychain.readPassword(service: "Locke", account: keyId)
-        if (currentPassword == nil) {
-            Task {
-                try! await Keychain.save(password: applicationKey.data(using: .utf8)!, service: "Locke", account: keyId)
-            }
-        } else {
-            logger.trace("Backblaze credential entry for id (\(keyId)) already exists")
+        do {
+            try Keychain.save(password: Data(applicationKey.utf8), service: "Locke", account: keyId)
+            return true
+        } catch {
+            logger.error("Unable to create Backblaze Keychain entry for id (\(keyId)): \(error.localizedDescription)")
             return false
         }
-        return true
     }
 
     public func upload(fromURL: String, toURL: String, progress: @escaping (Double) throws -> Void = { _ in }) async throws {
@@ -133,8 +135,15 @@ class BackblazeManager {
         try await fileTransferManager.copy(from: fromURL, to: destination, progress: progress)
     }
 
-    enum BackblazeError: Error {
+    enum BackblazeError: LocalizedError {
         case notAuthenticated
         case invalidResourcePath(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .notAuthenticated: return "Backblaze is not authenticated. Check the key ID, endpoint and Keychain entry."
+            case .invalidResourcePath(let path): return "'\(path)' is not a valid S3 path (expected s3://bucket/path)."
+            }
+        }
     }
 }

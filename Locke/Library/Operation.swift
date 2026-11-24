@@ -17,26 +17,17 @@ struct Operation {
     let stderr: String?
 }
 
-// Helper to throttle execution of code
-// See: https://digitalbunker.dev/rate-limiting-on-ios/
-struct ThrottleExecution {
-    private static var previousExecution = Date.distantPast
-    static func execute(minimumInterval: TimeInterval, queue: DispatchQueue, _ block: @escaping () -> Void) {
-        if abs(previousExecution.timeIntervalSinceNow) > minimumInterval {
-            previousExecution = Date()
-            queue.async { block() }
-        }
-    }
+// Last time a throttled progress update was applied. Only touched on the main thread
+private var lastProgressUpdate = Date.distantPast
 
-}
-
-// Function to update the progress with throttling. This will only allow the code to be
-// executed every 0.3 seconds. All other executions will be discarded
+// Update an archive's operation progress on the main thread (Core Data objects belong to the main
+// context). Start (0), finish (1) and reset (-1) always apply; intermediate values are throttled to
+// one update every 0.3 seconds. Safe to call from any thread
 func updateOperationProgress(archive: ArchiveData, progress: Double) {
-    if (progress == -1 || progress == 0 || progress == 1) {
-        archive.operationProgress = progress
-    } else {
-        ThrottleExecution.execute(minimumInterval: 0.3, queue: .main) {
+    DispatchQueue.main.async {
+        let isMilestone = progress == -1 || progress == 0 || progress == 1
+        if isMilestone || abs(lastProgressUpdate.timeIntervalSinceNow) > 0.3 {
+            lastProgressUpdate = Date()
             archive.operationProgress = progress
         }
     }
@@ -49,39 +40,59 @@ func stopOperationProgress(archive: ArchiveData) {
     updateOperationProgress(archive: archive, progress: -1)
 }
 
+// Run a command line task off the main thread and return its result
+func runTask(executable: URL, arguments: [String] = [], inputPipeString: String? = nil) async throws -> Operation {
+    try await withCheckedThrowingContinuation { continuation in
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                continuation.resume(returning: try executeTask(executable: executable, arguments: arguments, inputPipeString: inputPipeString))
+            } catch {
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+}
 
-// Execute a command line task
+// Execute a command line task, blocking the calling thread until it exits. Prefer runTask, which
+// keeps this off the main thread
 func executeTask(executable: URL, arguments: [String] = [], inputPipeString: String? = nil) throws -> Operation {
-    // Start a new process
     let task = Process()
-    
-    // Assign the launch path and arguments string array right away
     task.executableURL = executable
     task.arguments = arguments
-    
-    // Create and assign the output pipe
+
     let stdoutPipe = Pipe()
     let stderrPipe = Pipe()
     task.standardOutput = stdoutPipe
     task.standardError = stderrPipe
-    
-    // If innput pipe string has been defined, then also create and assign an input pipe
-    if (inputPipeString != nil) {
+
+    // Feed the input (e.g. a password for -stdinpass) through stdin, then close it
+    if let input = inputPipeString {
         let inputPipe = Pipe()
         task.standardInput = inputPipe
-        inputPipe.fileHandleForWriting.write(inputPipeString!.data(using: encoding)!)
-        inputPipe.fileHandleForWriting.closeFile()
+        inputPipe.fileHandleForWriting.write(Data(input.utf8))
+        try? inputPipe.fileHandleForWriting.close()
     }
-    
-    logger.trace("Task \(executable) \(arguments)")
-    
-    // Launch the task
-    try task.run()
-    task.waitUntilExit()
-    
-    // Grab the result from the output pipe. If it is nil, throw an error. Otherwise return the result
-    let stdout = String(data: stdoutPipe.fileHandleForReading.readDataToEndOfFile(), encoding: encoding)
-    let stderr = String(data: stderrPipe.fileHandleForReading.readDataToEndOfFile(), encoding: encoding)
 
-    return Operation(code: task.terminationStatus, success: task.terminationStatus == 0, stdout: stdout, stderr: stderr)
+    logger.trace("Task \(executable.path(percentEncoded: false)) \(arguments)")
+
+    try task.run()
+
+    // Drain both pipes while the task runs. Waiting for exit first deadlocks once a pipe's buffer
+    // (64 KB) fills, which long-running commands with progress output can easily do
+    var stderrData = Data()
+    let stderrDone = DispatchGroup()
+    stderrDone.enter()
+    DispatchQueue.global(qos: .utility).async {
+        stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+        stderrDone.leave()
+    }
+    let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
+    stderrDone.wait()
+    task.waitUntilExit()
+
+    return Operation(
+        code: task.terminationStatus,
+        success: task.terminationStatus == 0,
+        stdout: String(data: stdoutData, encoding: encoding),
+        stderr: String(data: stderrData, encoding: encoding))
 }

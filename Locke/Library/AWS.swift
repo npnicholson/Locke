@@ -33,9 +33,9 @@ class AWSManager {
     
     // On deinit, remove the observers
     deinit {
-        try! self.fileTransferManager?.syncShutdown()
-        try! self.client?.syncShutdown()
-        try! self.threadPool.syncShutdownGracefully()
+        try? self.fileTransferManager?.syncShutdown()
+        try? self.client?.syncShutdown()
+        try? self.threadPool.syncShutdownGracefully()
     }
     
     public func isAuthed() -> Bool{
@@ -46,8 +46,12 @@ class AWSManager {
         
         // If we were already authenticated, then shutdown the file transfer manager before we re-authenticate
         if (self.authenticated) {
-            try! self.fileTransferManager?.syncShutdown()
-            try! self.client?.syncShutdown()
+            do {
+                try self.fileTransferManager?.syncShutdown()
+                try self.client?.syncShutdown()
+            } catch {
+                logger.error("AWS shutdown before re-authenticating failed: \(error.localizedDescription)")
+            }
         }
         
         // Grab the timeout setting (convert min from setting to seconds here)
@@ -83,24 +87,36 @@ class AWSManager {
         return true
     }
     
+    // Create a Keychain entry for the access key. Returns false if one already exists or the save fails
     public func storeCredentials(accessKeyId: String, secretAccessKey: String) -> Bool {
-        let currentPassword = try? Keychain.readPassword(service: "Locke", account: accessKeyId)
-        if (currentPassword == nil) {
-            Task {
-                try! await Keychain.save(password: secretAccessKey.data(using: .utf8)!, service: "Locke", account: accessKeyId)
-            }
-        } else {
-            logger.trace("AWS credential entry for id (\(accessKeyId)) already exists")
+        do {
+            try Keychain.save(password: Data(secretAccessKey.utf8), service: "Locke", account: accessKeyId)
+            return true
+        } catch {
+            logger.error("Unable to create AWS Keychain entry for id (\(accessKeyId)): \(error.localizedDescription)")
             return false
         }
-        return true
     }
     
-    public func upload (fromURL: String, toURL: String, progress: @escaping (Double) throws -> Void = { _ in }) async {
-        try! await self.fileTransferManager!.copy(
-            from: fromURL,
-            to: S3File(url: toURL)!,
-            progress: progress
-        )
+    public func upload(fromURL: String, toURL: String, progress: @escaping (Double) throws -> Void = { _ in }) async throws {
+        guard let fileTransferManager = self.fileTransferManager else {
+            throw AWSError.notAuthenticated
+        }
+        guard let destination = S3File(url: toURL) else {
+            throw AWSError.invalidResourcePath(toURL)
+        }
+        try await fileTransferManager.copy(from: fromURL, to: destination, progress: progress)
+    }
+
+    enum AWSError: LocalizedError {
+        case notAuthenticated
+        case invalidResourcePath(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .notAuthenticated: return "AWS is not authenticated. Check the access key in Settings and Keychain."
+            case .invalidResourcePath(let path): return "'\(path)' is not a valid S3 path (expected s3://bucket/path)."
+            }
+        }
     }
 }

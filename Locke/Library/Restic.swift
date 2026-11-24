@@ -49,10 +49,12 @@ final class ResticManager: @unchecked Sendable {
         if account.isEmpty { return false }
         let currentPassword = try? Keychain.readPassword(service: ResticManager.keychainService, account: account)
         if currentPassword == nil {
-            Task {
-                try? await Keychain.save(password: password.data(using: .utf8) ?? Data(), service: ResticManager.keychainService, account: account)
+            do {
+                try Keychain.save(password: Data(password.utf8), service: ResticManager.keychainService, account: account)
+                return true
+            } catch {
+                logger.error("Unable to create Restic Keychain entry for \(account): \(error.localizedDescription)")
             }
-            return true
         }
         return false
     }

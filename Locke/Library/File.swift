@@ -84,3 +84,18 @@ func copyStringToClipboard (_ stringToCopy: String) {
     pasteboard.declareTypes([.string], owner: nil)
     pasteboard.setString(stringToCopy, forType: .string)
 }
+
+// Log an error and show it to the user in an alert. Locke is a menu bar app, so it is activated first
+// to make sure the alert is visible. Safe to call from any thread
+func presentError(_ title: String, _ error: Error? = nil, message: String? = nil) {
+    let detail = message ?? error?.localizedDescription ?? ""
+    logger.error("\(title): \(detail)")
+    DispatchQueue.main.async {
+        NSApp.activate(ignoringOtherApps: true)
+        let alert = NSAlert()
+        alert.alertStyle = .warning
+        alert.messageText = title
+        alert.informativeText = detail
+        alert.runModal()
+    }
+}

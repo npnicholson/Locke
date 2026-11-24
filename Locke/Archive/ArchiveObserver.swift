@@ -30,8 +30,8 @@ class ArchiveObserver {
         self.handler = handler
         
         // Set up the observers to watch for mounts and unmounts
-        mountObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didMountNotification, object: NSWorkspace.shared, queue: nil, using: self.mounted)
-        unmountObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didUnmountNotification, object: NSWorkspace.shared, queue: nil, using: self.unmounted)
+        mountObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didMountNotification, object: NSWorkspace.shared, queue: .main, using: self.mounted)
+        unmountObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didUnmountNotification, object: NSWorkspace.shared, queue: .main, using: self.unmounted)
     }
     
     // On deinit, remove the observers
@@ -48,9 +48,9 @@ class ArchiveObserver {
     
     // Called when any drive is mounted
     private func mounted(_ notification: Notification) {
-        if let devicePath = notification.userInfo!["NSDevicePath"] as? String {
+        if let devicePath = notification.userInfo?["NSDevicePath"] as? String {
             // Get all of the archives from core data
-            let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)
+            let archives = self.manager.fetchArchives()
             
             // Flag to tell us if we need to store core data later
             var contextChanged = false
@@ -75,59 +75,50 @@ class ArchiveObserver {
             
             // If the context was changed then save it
             if (contextChanged) {
-                try? self.context.save()
+                self.manager.saveContext()
             }
         }
     }
     
     // Called when any drive is unmounted
     private func unmounted(_ notification: Notification) {
-        if let devicePath = notification.userInfo!["NSDevicePath"] as? String {
-            // Get all of the archives from core data
-            let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)
+        guard let devicePath = notification.userInfo?["NSDevicePath"] as? String else { return }
+
+        // Only react to Locke's own archives
+        guard let archive = self.manager.fetchArchives().first(where: { $0.mountURL?.path(percentEncoded: false) == devicePath }) else { return }
+
+        // Delay one second to allow the OS to actually finish ejecting the archive
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(1))
+
+            // Note it as detached
+            archive.attached = false
+            archive.scheduledClose = ""
             
-            // Flag to tell us if we need to store core data later
-            var contextChanged = false
+            // Unwatch the archive
+            self.manager.watchdog.unwatch(archive: archive)
             
-            archives.forEach { archive in
-                // Delay one second to allow the OS to actually eject the archive.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    // Ensure that the drive that was mounted was one of Locke's archives
-                    if (devicePath == archive.mountURL?.path(percentEncoded: false)) {
-                        
-                        // If it is, note it as detached and update the archives size. Then run the
-                        // compleation handler
-                        archive.attached = false
-                        archive.scheduledClose = ""
-                        
-                        // Unwatch the archive
-                        self.manager.watchdog.unwatch(archive: archive)
-                        
-                        // Compact it if required
-                        if (UserDefaults.standard.bool(.compactOnDetach)) {
-                            if let id = archive.id, let hash = self.manager.openArchives[id] {
-                                logger.trace("Compacting Archive from Observer")
-                                try? self.manager.executeCompact(archive, password: hash)
-                            }
-                        }
-                        
-                        // Update size and modified date
-                        if let url = archive.bundleURL {
-                            archive.size = directorySize(url: url)
-                            archive.modified = directoryModified(url: url)
-                        }
-                        if let handler = self.handler {
-                            handler()
-                        }
-                        contextChanged = true
-                    }
+            // Compact it if required. Archives closed through Locke are compacted by the close flow
+            // (which also forgets the key), so this only covers archives ejected from Finder
+            if (UserDefaults.standard.bool(.compactOnDetach)), let id = archive.id, let hash = self.manager.openArchives[id] {
+                self.manager.openArchives[id] = nil
+                logger.trace("Compacting Archive from Observer")
+                startOperationProgress(archive: archive)
+                do {
+                    try await self.manager.executeCompact(archive, password: hash)
+                } catch {
+                    logger.error("Unable to compact '\(archive.name ?? "archive")' after eject: \(error.localizedDescription)")
                 }
+                stopOperationProgress(archive: archive)
             }
             
-            // If the context was changed then save it
-            if (contextChanged) {
-                try? self.context.save()
+            // Update size and modified date
+            if let url = archive.bundleURL {
+                archive.size = directorySize(url: url)
+                archive.modified = directoryModified(url: url)
             }
+            self.manager.saveContext()
+            self.handler?()
         }
     }
 }

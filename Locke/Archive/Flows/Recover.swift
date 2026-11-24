@@ -7,46 +7,42 @@
 
 import Foundation
 import CoreData
-import CryptoKit
 
-// MARK: - Open Archive Flow
+// MARK: - Recover Archive Flow
 extension ArchiveManager {
     
-    // Start the open archive flow with the given archive
+    // Start the recover flow, which opens the archive using its recovery key instead of the password
     public func recover(_ objectId: NSManagedObjectID) {
-        // Get just the specific archive from CoreData
-        let archive = try! self.context.existingObject(with: objectId) as! ArchiveData
+        guard let archive = self.archive(objectId), !archive.attached else { return }
         
-        if (!archive.attached) {
-            
-            // Activate the passwordPromptManager
-            self.passwordPromptManager.activate(self.recoverHandle, archive: archive,
-                                                title: "Locke: Enter your recovery Key.",
-                                                subtitle: "Please enter the recovery key for '\(archive.name ?? "Unknown")'.",
-                                                prompt: "This key was generated when the archive was created.", data: nil)
-            
-            // Activate Locke if it is not already. This will force the user to interact with the new password prompt
-            self.lockeDelegate.activate()
-        }
+        // Activate the passwordPromptManager
+        self.passwordPromptManager.activate(self.recoverHandler, archive: archive,
+                                            title: "Locke: Enter your recovery Key.",
+                                            subtitle: "Please enter the recovery key for '\(archive.name ?? "Unknown")'.",
+                                            prompt: "This key was generated when the archive was created.", data: nil)
+        
+        // Activate Locke if it is not already. This will force the user to interact with the new password prompt
+        self.lockeDelegate.activate()
     }
     
-    private func recoverHandle(_ result: PromptResult, _ archive: ArchiveData, _ key: String, _ data: Any) -> Bool {
+    @MainActor
+    private func recoverHandler(_ result: PromptResult, _ archive: ArchiveData, _ key: String, _ data: Any?) async -> Bool {
         if (result == .cancelled) { return false }
         guard let archiveId = archive.id else { return false }
         do {
-            
             // Attach the archive
-            try self.executeAttach(archive, password: key)
-            
-            // Note it as open for recordkeeping
-            self.openArchives[archiveId] = key
-            
-            // Update the list of mounted archives
-            self.scanArchiveMounts()
-            
-            return true
+            try await self.executeAttach(archive, password: key)
         } catch {
+            logger.error("Unable to recover '\(archive.name ?? "archive")': \(error.localizedDescription)")
             return false
         }
+        
+        // Note it as open for recordkeeping
+        self.openArchives[archiveId] = key
+        
+        // Update the list of mounted archives
+        self.scanArchiveMounts()
+        
+        return true
     }
 }

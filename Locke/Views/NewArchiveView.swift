@@ -117,6 +117,7 @@ struct NewArchiveDataEntry: View {
     @FetchRequest(sortDescriptors: [globalArchiveSortDescriptor]) var archives: FetchedResults<ArchiveData>
     
     @State var creating: Bool = false
+    @State var createError: AlertData? = nil
     @StateObject private var newArchiveViewModel = NewArchiveViewModel()
     
     @State var selectedStorageDirectory: URL = archivesDirectory
@@ -229,16 +230,24 @@ struct NewArchiveDataEntry: View {
                 .keyboardShortcut(.cancelAction)
                 
                 Button {
-                    if (newArchiveViewModel.validated) {
+                    if (newArchiveViewModel.validated && !creating) {
                         creating = true
                         let name = newArchiveViewModel.name.trimmingCharacters(in: .whitespacesAndNewlines)
-                        keyArchive = try! archiveManager.create(
-                            name: name,
-                            password: newArchiveViewModel.password,
-                            bundleURL: selectedStorageDirectory == archivesDirectory ? nil : selectedStorageDirectory.appending(path: "/\(name).sparsebundle"),
-                            mountURL: selectedMountDirectory == mountDirectory ? nil : selectedMountDirectory.appending(path: "/\(name)/")
-                        )
-                        activeSheet = .storeKey
+                        Task { @MainActor in
+                            defer { creating = false }
+                            do {
+                                keyArchive = try await archiveManager.create(
+                                    name: name,
+                                    password: newArchiveViewModel.password,
+                                    bundleURL: selectedStorageDirectory == archivesDirectory ? nil : selectedStorageDirectory.appending(path: "/\(name).sparsebundle"),
+                                    mountURL: selectedMountDirectory == mountDirectory ? nil : selectedMountDirectory.appending(path: "/\(name)/")
+                                )
+                                activeSheet = .storeKey
+                            } catch {
+                                logger.error("Unable to create archive '\(name)': \(error.localizedDescription)")
+                                createError = AlertData(title: "Unable to create '\(name)'", message: error.localizedDescription)
+                            }
+                        }
                     }
                 } label: {
                     Text(creating ? "Loading" : "Create")
@@ -247,12 +256,15 @@ struct NewArchiveDataEntry: View {
                 }
                 .buttonStyle(.glassProminent)
                 .keyboardShortcut(.defaultAction)
-                .disabled(!newArchiveViewModel.validated)
+                .disabled(!newArchiveViewModel.validated || creating)
             }
             .controlSize(.large)
         }
         .padding()
         .frame(minWidth: 260, maxWidth: 260, minHeight: 360, maxHeight: 450)
+        .alert(item: $createError) { data in
+            Alert(title: Text(data.title), message: Text(data.message), dismissButton: .cancel(Text("OK")))
+        }
         .onAppear(perform: {
             self.newArchiveViewModel.archiveNames = archives.map({ ($0 as ArchiveData).name ?? "unknown" })
         })

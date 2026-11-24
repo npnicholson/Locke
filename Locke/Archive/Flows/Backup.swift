@@ -12,17 +12,13 @@ import UniformTypeIdentifiers
 
 import Zip
 
-// MARK: - Close Archive Flow
+// MARK: - Backup Archive Flow
 extension ArchiveManager {
-    // Show the mount url by opening it in Finder
+    // Copy the archive's bundle to a location the user picks
     public func backupToDisk(_ id: NSManagedObjectID) {
-        // Get just the specific archive from CoreData
-        let archive = try! self.context.existingObject(with: id) as! ArchiveData
-        
-        guard let name = archive.name else { return }
+        guard let archive = self.archive(id), let name = archive.name else { return }
         
         let savePanel = NSSavePanel()
-        
         savePanel.title = "Backup '\(name)'"
         savePanel.showsTagField = false
         savePanel.showsHiddenFiles = true
@@ -30,88 +26,64 @@ extension ArchiveManager {
         savePanel.level = .popUpMenu
         savePanel.prompt = "Copy Archive"
         savePanel.nameFieldStringValue = "\(name).sparsebundle"
-        
-        
-        
         savePanel.allowedContentTypes = [UTType.bundle]
         savePanel.allowsOtherFileTypes = false
         
         savePanel.begin { response in
-            if response == .OK, let destinationUrl = savePanel.url {
-                try? self.executeBackup(archive, destinationUrl)
+            guard response == .OK, let destinationUrl = savePanel.url else { return }
+            Task { @MainActor in
+                startOperationProgress(archive: archive)
+                defer { stopOperationProgress(archive: archive) }
+                do {
+                    try await self.executeBackup(archive, destinationUrl)
+                    logger.trace("Backed up '\(name)' to \(destinationUrl.path(percentEncoded: false))")
+                } catch {
+                    presentError("Unable to back up '\(name)'", error)
+                }
             }
         }
     }
     
+    @MainActor
     public func backupToAWS(_ id: NSManagedObjectID) async {
-        // Get just the specific archive from CoreData
-        let archive = try! self.context.existingObject(with: id) as! ArchiveData
-        
-        guard let name = archive.name else { return }
-        guard let id = archive.id else { return }
-        guard let source = archive.bundleURL else { return }
-        
-        var dateString = ""
-        if (UserDefaults.standard.bool(.backupUseDate)) {
-            let date = Date()
-            let df = DateFormatter()
-            df.dateFormat = "yyyy-MM-dd"
-            dateString = "-" + df.string(from: date)
+        let resourcePath = UserDefaults.standard.trimmedString(.awsS3ResourcePath)
+        await self.zipAndUpload(id, service: "AWS", resourcePath: resourcePath) { zip, destination, progress in
+            try await self.lockeDelegate.AWSManager.upload(fromURL: zip, toURL: destination, progress: progress)
         }
-        
-        let awsS3ResourcePath = UserDefaults.standard.trimmedString(.awsS3ResourcePath)
-        if (awsS3ResourcePath.isEmpty) { return }
-        
-        let zipLocation = tempDirectory.appending(path: "\(id).zip")
-        let destination = "\(awsS3ResourcePath)/\(name)\(dateString).zip"
-        
-        // Init the progress to 0 %
-        startOperationProgress(archive: archive)
-        
-        do {
-
-            // Zip the archive so we can upload it to AWS
-            try Zip.zipFiles(paths: [source], zipFilePath: zipLocation, password: nil, progress: { (progress) -> () in
-                updateOperationProgress(archive: archive, progress: progress / 2)
-            })
-            
-            // Upload the zipped archive
-            await lockeDelegate.AWSManager.upload(fromURL: zipLocation.path(percentEncoded: false), toURL: destination, progress: { (progress) -> () in
-                updateOperationProgress(archive: archive, progress: (progress / 2) + 0.5)
-            })
-            
-            // Clean up by removing the zipped archive from disk
-            try! fm.removeItem(at: zipLocation)
-        }
-        
-        catch {
-            logger.error("Failed to backup to AWS")
-        }
-        
-        // Set the operation to complete
-        stopOperationProgress(archive: archive)
     }
 
+    @MainActor
     public func backupToBackblaze(_ id: NSManagedObjectID) async {
-        // Get just the specific archive from CoreData
-        let archive = try! self.context.existingObject(with: id) as! ArchiveData
+        let resourcePath = UserDefaults.standard.trimmedString(.backblazeResourcePath)
+        await self.zipAndUpload(id, service: "Backblaze", resourcePath: resourcePath) { zip, destination, progress in
+            try await self.lockeDelegate.BackblazeManager.upload(fromURL: zip, toURL: destination, progress: progress)
+        }
+    }
 
-        guard let name = archive.name else { return }
-        guard let id = archive.id else { return }
-        guard let source = archive.bundleURL else { return }
+    // Zip the archive's bundle into the temp folder, upload it with the given uploader, then remove the zip.
+    // Progress runs 0-50% for zipping and 50-100% for the upload. Failures are shown to the user
+    @MainActor
+    private func zipAndUpload(_ id: NSManagedObjectID, service: String, resourcePath: String,
+                              upload: @escaping (String, String, @escaping (Double) throws -> Void) async throws -> Void) async {
+        guard let archive = self.archive(id), let name = archive.name, let archiveId = archive.id, let source = archive.bundleURL else { return }
+
+        if (resourcePath.isEmpty) {
+            presentError("Unable to back up '\(name)' to \(service)", message: "Set the \(service) resource path in Settings first.")
+            return
+        }
+        if (archive.attached) {
+            presentError("Unable to back up '\(name)' to \(service)", ArchiveError.archiveAttached)
+            return
+        }
 
         var dateString = ""
         if (UserDefaults.standard.bool(.backupUseDate)) {
-            let date = Date()
             let df = DateFormatter()
             df.dateFormat = "yyyy-MM-dd"
-            dateString = "-" + df.string(from: date)
+            dateString = "-" + df.string(from: Date())
         }
 
-        let resourcePath = UserDefaults.standard.trimmedString(.backblazeResourcePath)
-        if (resourcePath.isEmpty) { return }
-
-        let zipLocation = tempDirectory.appending(path: "\(id).zip")
+        let zipLocation = tempDirectory.appending(path: "\(archiveId).zip")
         let destination = "\(resourcePath)/\(name)\(dateString).zip"
 
         // Init the progress to 0 %
@@ -124,40 +96,42 @@ extension ArchiveManager {
         }
 
         do {
-            // Zip the archive so we can upload it to Backblaze
-            try Zip.zipFiles(paths: [source], zipFilePath: zipLocation, password: nil, progress: { (progress) -> () in
-                updateOperationProgress(archive: archive, progress: progress / 2)
-            })
+            // Zipping a large archive takes a while, so do it off the main thread
+            try await Task.detached(priority: .userInitiated) {
+                try Zip.zipFiles(paths: [source], zipFilePath: zipLocation, password: nil, progress: { progress in
+                    updateOperationProgress(archive: archive, progress: progress / 2)
+                })
+            }.value
 
             // Upload the zipped archive
-            try await lockeDelegate.BackblazeManager.upload(fromURL: zipLocation.path(percentEncoded: false), toURL: destination, progress: { (progress) -> () in
+            try await upload(zipLocation.path(percentEncoded: false), destination) { progress in
                 updateOperationProgress(archive: archive, progress: (progress / 2) + 0.5)
-            })
-        }
-
-        catch {
-            logger.error("Failed to backup to Backblaze: \(error.localizedDescription)")
+            }
+            logger.trace("Backed up '\(name)' to \(destination)")
+        } catch {
+            presentError("Unable to back up '\(name)' to \(service)", error)
         }
     }
 
+    @MainActor
     public func backupToRestic(_ id: NSManagedObjectID) async {
-        let archive = try! self.context.existingObject(with: id) as! ArchiveData
+        guard let archive = self.archive(id), let bundleURL = archive.bundleURL else { return }
+        let title = "Unable to back up '\(archive.name ?? "archive")' with Restic"
         
         guard !archive.attached else {
-            logger.error("Cannot back up '\(archive.name ?? "Unknown")' with Restic because it is currently attached")
+            presentError(title, ArchiveError.archiveAttached)
             return
         }
-        guard let bundleURL = archive.bundleURL else { return }
         
         let repository = UserDefaults.standard.trimmedString(.resticRepositoryURL)
         if repository.isEmpty {
-            logger.error("Restic repository URL is not configured")
+            presentError(title, message: "Set the Restic repository URL in Settings first.")
             return
         }
         
         let account = UserDefaults.standard.trimmedString(.resticKeychainAccount)
         if account.isEmpty {
-            logger.error("Restic keychain account is not configured")
+            presentError(title, message: "Set the Restic Keychain account in Settings first.")
             return
         }
         
@@ -175,7 +149,7 @@ extension ArchiveManager {
         do {
             password = try lockeDelegate.ResticManager.password(account: account)
         } catch {
-            logger.error("Unable to fetch Restic password for account \(account): \(error.localizedDescription)")
+            presentError(title, error, message: "Unable to read the Restic password for '\(account)' from Keychain: \(error.localizedDescription)")
             return
         }
         
@@ -200,24 +174,22 @@ extension ArchiveManager {
                 logger.trace("Restic backup complete: \(summary.logDescription)")
             }
         } catch let resticError as ResticManager.ResticError {
+            let message: String
             switch resticError {
             case .repositoryMissing:
-                logger.error("Restic backup failed: repository URL is missing")
-            case .passwordMissing(let message):
-                logger.error("Restic backup failed: \(message)")
+                message = "The repository URL is missing."
+            case .passwordMissing(let detail):
+                message = detail
             case .unreadablePassword:
-                logger.error("Restic backup failed: restic password could not be read from keychain")
+                message = "The Restic password could not be read from Keychain."
             case .executableNotFound(let path):
-                logger.error("Restic backup failed: executable not found or not executable at \(path)")
-            case .processFailed(let code, let message):
-                if message.isEmpty {
-                    logger.error("Restic backup failed with exit code \(code)")
-                } else {
-                    logger.error("Restic backup failed with exit code \(code): \(message)")
-                }
+                message = "The restic executable was not found (or is not executable) at \(path)."
+            case .processFailed(let code, let detail):
+                message = detail.isEmpty ? "restic exited with code \(code)." : "restic exited with code \(code): \(detail)"
             }
+            presentError(title, message: message)
         } catch {
-            logger.error("Restic backup failed: \(error.localizedDescription)")
+            presentError(title, error)
         }
     }
     

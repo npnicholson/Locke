@@ -25,6 +25,25 @@ enum ArchiveError: Error {
     case operationFailure(Operation)
 }
 
+extension ArchiveError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .archiveExists: return "An archive already exists at this location."
+        case .archiveDoesNotExist: return "The archive could not be found on disk."
+        case .archiveAttached: return "The archive is open. Close it first."
+        case .archiveNotAttached: return "The archive is not open."
+        case .noPasswordProvided: return "No password was provided."
+        case .notCreated: return "The archive was not created."
+        case .notRemoved: return "The archive could not be removed."
+        case .notAttached: return "The archive could not be opened."
+        case .notDetached: return "The archive could not be closed. A file inside it may still be in use."
+        case .operationFailure(let operation):
+            let detail = operation.stderr?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            return detail.isEmpty ? "hdiutil failed with exit code \(operation.code)." : detail
+        }
+    }
+}
+
 func defaultArchiveBundleURL(id: UUID) -> URL {
     return archivesDirectory.appending(path: "/\(id).sparsebundle")
 }
@@ -48,8 +67,9 @@ func generateArchiveJsonString (archive: ArchiveData, key: String) -> String {
         "key": key,
     ]
 
-    let jsonData = try! JSONSerialization.data(withJSONObject: exportJson, options: JSONSerialization.WritingOptions()) as NSData
-    return NSString(data: jsonData as Data, encoding: String.Encoding.utf8.rawValue)! as String
+    // Only strings go into this dictionary, so serialization cannot fail
+    guard let jsonData = try? JSONSerialization.data(withJSONObject: exportJson) else { return "" }
+    return String(decoding: jsonData, as: UTF8.self)
 }
 
 // MARK: - Main Archive Manager (Start and Stop)
@@ -97,10 +117,13 @@ class ArchiveManager: NSObject, ObservableObject {
         self.observer.handler = self.scanArchiveMounts
         
         // Init the important directories if they don't already exist
-        try! fm.createDirectory (at: archivesDirectory, withIntermediateDirectories: true, attributes: nil)
-        try! fm.createDirectory (at: orphansDirectory, withIntermediateDirectories: true, attributes: nil)
-        try! fm.createDirectory (at: mountDirectory, withIntermediateDirectories: true, attributes: nil)
-        try! fm.createDirectory (at: tempDirectory, withIntermediateDirectories: true, attributes: nil)
+        for directory in [archivesDirectory, orphansDirectory, mountDirectory, tempDirectory] {
+            do {
+                try fm.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                presentError("Unable to create Locke's folders", error)
+            }
+        }
         
         // Make sure the temp directory is empty on startup
         do {
@@ -111,7 +134,7 @@ class ArchiveManager: NSObject, ObservableObject {
         } catch { logger.error("Unable to clear temp directory: \(error.localizedDescription)") }
         
         // Get ArchiveData in CoreData as 'archives'
-        let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)
+        let archives = self.fetchArchives()
         
         // Ensure that all of the archives in CoreData actually exist on disk
         var dataChanged = false
@@ -124,7 +147,7 @@ class ArchiveManager: NSObject, ObservableObject {
         }
         if (dataChanged) {
             // Save the changes to CoreData
-            try! context.save()
+            self.saveContext()
         }
         
         // Ensure that all of the archives on disk have references in CoreData
@@ -157,24 +180,22 @@ class ArchiveManager: NSObject, ObservableObject {
         }
         
         if (dataChanged) {
-            try! context.save()
+            self.saveContext()
         }
     }
     
     // To be called before the application terminates. This closes all of the archives
-    public func end() {
+    @MainActor
+    public func end() async {
         if (UserDefaults.standard.bool(.ejectOnClose)) {
-            
-            // Get ArchiveData in CoreData as 'archives'
-            let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)
-            
             // If any archives are attached, then detach them
-            for archiveData in archives {
-                if (self.attached(archiveData)) {
-                    try? self.executeDetach(archiveData)
+            for archiveData in self.fetchArchives() where self.attached(archiveData) {
+                do {
+                    try await self.executeDetach(archiveData)
+                } catch {
+                    logger.error("Unable to eject '\(archiveData.name ?? "archive")' on quit: \(error.localizedDescription)")
                 }
             }
-            
         }
         // Take note of which archives are still open for next time
         self.scanArchiveMounts()
@@ -187,7 +208,7 @@ class ArchiveManager: NSObject, ObservableObject {
         var anyArchivesOpen = false
         
         // Get a list of all archives
-        let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)
+        let archives = self.fetchArchives()
         
         var newOpenArchives: [UUID: String] = [:]
         
@@ -212,7 +233,7 @@ class ArchiveManager: NSObject, ObservableObject {
         }
         
         // Store any changes to Core Data
-        try? context.save()
+        self.saveContext()
         
         // Reassign our list of open archives based on this new data
         self.openArchives = newOpenArchives
@@ -220,5 +241,48 @@ class ArchiveManager: NSObject, ObservableObject {
         // Update the ephemeral storage so that the menuBarExtra text can update
         // if any archives are open
         self.storage.archiveOpen = anyArchivesOpen
+    }
+}
+
+// MARK: - Core Data helpers
+extension ArchiveManager {
+    // Look up an archive by its object ID. Returns nil (and logs) if it no longer exists, for example
+    // when it was removed while a menu or notification still referenced it
+    func archive(_ objectId: NSManagedObjectID) -> ArchiveData? {
+        do {
+            if let archive = try self.context.existingObject(with: objectId) as? ArchiveData {
+                return archive
+            }
+        } catch {
+            logger.error("Archive no longer exists: \(error.localizedDescription)")
+        }
+        return nil
+    }
+
+    // Look up an archive by its UUID
+    func archive(id: UUID) -> ArchiveData? {
+        let request = NSFetchRequest<ArchiveData>(entityName: "ArchiveData")
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        return (try? self.context.fetch(request))?.first
+    }
+
+    // Fetch every archive, logging and returning an empty list if Core Data fails
+    func fetchArchives() -> [ArchiveData] {
+        do {
+            return try self.context.fetch(globalArchiveFetchRequest)
+        } catch {
+            logger.error("Unable to fetch archives: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    // Save the context if it has changes, logging any failure rather than crashing
+    func saveContext() {
+        guard self.context.hasChanges else { return }
+        do {
+            try self.context.save()
+        } catch {
+            logger.error("Unable to save archive data: \(error.localizedDescription)")
+        }
     }
 }

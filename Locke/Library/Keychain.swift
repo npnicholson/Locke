@@ -41,7 +41,7 @@ class Keychain {
         case randomDataError
     }
     
-    static func save(password: Data, service: String, account: String) async throws {
+    static func save(password: Data, service: String, account: String) throws {
 
         let query: [String: AnyObject] = [
             // kSecAttrService,  kSecAttrAccount, and kSecClass
@@ -162,7 +162,7 @@ class Keychain {
         return password
     }
     
-    static func deleteKey(archiveId: UUID) async throws {
+    static func deleteKey(archiveId: UUID) throws {
         let query: [String: AnyObject] = [
             // kSecAttrService,  kSecAttrAccount, and kSecClass
             // uniquely identify the item to delete in Keychain
@@ -199,18 +199,18 @@ class Keychain {
         return paddedHexString
     }
     
-    static func createKey(password: String, archiveId: UUID) -> String {
+    // Create a new salt for the archive, store it in Keychain and return the derived key. The salt is
+    // saved before returning, so the key can always be derived again later
+    static func createKey(password: String, archiveId: UUID) throws -> String {
         // Randomly generated salt to be stored in keychain
-        let saltString = try! Keychain.generateRandomString(length: 64)
+        let saltString = try Keychain.generateRandomString(length: 64)
         
         // Convert both the password and salt to data
-        let passwordData = password.data(using: .utf8)!
-        let saltData = saltString.data(using: .utf8)!
+        let passwordData = Data(password.utf8)
+        let saltData = Data(saltString.utf8)
         
-        Task {
-            // Save the salt to keychain
-            try! await Keychain.save(password: saltData, service: "Locke", account: archiveId.uuidString)
-        }
+        // Save the salt to keychain
+        try Keychain.save(password: saltData, service: "Locke", account: archiveId.uuidString)
             
         // Build a hash to be fed into the Symetric key using the password and salt
         var hash = SHA512()
@@ -220,12 +220,14 @@ class Keychain {
         return hash.finalize().hexString
     }
     
-    static func deriveKey(password: String, archiveId: UUID) -> String {
+    // Derive the archive key from the password and the salt stored in Keychain. Throws if the salt
+    // is missing, in which case only the recovery key can open the archive
+    static func deriveKey(password: String, archiveId: UUID) throws -> String {
         // Get the salt from keychain
-        let saltData = try! Keychain.readPassword(service: "Locke", account: archiveId.uuidString)
+        let saltData = try Keychain.readPassword(service: "Locke", account: archiveId.uuidString)
         
         // Convert the password to data
-        let passwordData = password.data(using: .utf8)!
+        let passwordData = Data(password.utf8)
         
         // Build a hash to be fed into the Symetric key using the password and salt
         var hash = SHA512()
@@ -233,5 +235,19 @@ class Keychain {
         hash.update(data: saltData)
         
         return hash.finalize().hexString
+    }
+}
+
+extension Keychain.KeychainError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .itemNotFound: return "The Keychain entry could not be found."
+        case .duplicateItem: return "A Keychain entry with this name already exists."
+        case .invalidItemFormat: return "The Keychain entry is not in the expected format."
+        case .unexpectedStatus(let status):
+            let message = SecCopyErrorMessageString(status, nil) as String? ?? "status \(status)"
+            return "Keychain error: \(message)"
+        case .randomDataError: return "Unable to generate secure random data."
+        }
     }
 }

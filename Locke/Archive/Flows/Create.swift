@@ -7,7 +7,6 @@
 
 import Foundation
 import CoreData
-import CryptoKit
 
 struct ArchiveDataAndKey {
     let archive: ArchiveData
@@ -16,7 +15,9 @@ struct ArchiveDataAndKey {
 
 // MARK: - Create Archive Flow
 extension ArchiveManager {
-    public func create(name: String, password: String, bundleURL: URL? = nil, mountURL: URL? = nil, maxSize: Int16 = 1024) throws -> ArchiveDataAndKey {
+    // Create a new archive on disk and in Core Data. Throws, leaving nothing behind, if any step fails
+    @MainActor
+    public func create(name: String, password: String, bundleURL: URL? = nil, mountURL: URL? = nil, maxSize: Int16 = 1024) async throws -> ArchiveDataAndKey {
         
         // Create a stub archive within the core data context
         let archive = ArchiveData(context: self.context)
@@ -42,19 +43,20 @@ extension ArchiveManager {
         archive.size = 0
         archive.noPassword = password.count == 0
         
-        let hashString = Keychain.createKey(password: password, archiveId: archiveId)
-        
         do {
-            try self.executeCreate(archive, password: hashString)
+            let hashString = try Keychain.createKey(password: password, archiveId: archiveId)
+            try await self.executeCreate(archive, password: hashString)
+
             archive.size = directorySize(url: bundleURL)
             archive.modified = directoryModified(url: bundleURL)
-            
             try self.context.save()
-            
+
+            return ArchiveDataAndKey(archive: archive, key: hashString)
         } catch {
-            // TODO: Throw error here
+            // Roll back: drop the Core Data stub and the stored salt so no half-created archive remains
+            self.context.delete(archive)
+            try? Keychain.deleteKey(archiveId: archiveId)
+            throw error
         }
-        
-        return ArchiveDataAndKey(archive: archive, key: hashString)
     }
 }

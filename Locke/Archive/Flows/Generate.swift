@@ -7,9 +7,8 @@
 
 import Foundation
 import CoreData
-import CryptoKit
 
-// MARK: - Open Archive Flow
+// MARK: - Generate Recovery Key Flow
 extension ArchiveManager {
     
     public enum GenerateCommand {
@@ -17,11 +16,10 @@ extension ArchiveManager {
         case store
     }
     
-    // Start the open archive flow with the given archive
+    // Start the generate recovery key flow with the given archive
     public func generate(_ objectId: NSManagedObjectID, _ command: GenerateCommand) {
         // Get just the specific archive from CoreData
-        let archive = try! self.context.existingObject(with: objectId) as! ArchiveData
-        guard let archiveId = archive.id else { return }
+        guard let archive = self.archive(objectId), let archiveId = archive.id else { return }
         
         if (!archive.attached) {
             // Activate the passwordPromptManager
@@ -33,43 +31,45 @@ extension ArchiveManager {
             // Activate Locke if it is not already. This will force the user to interact with the new password prompt
             self.lockeDelegate.activate()
         } else if (self.openArchives[archiveId] == nil || self.openArchives[archiveId] == "") {
-            // Activate the passwordPromptManager
-            self.passwordPromptManager.activate(self.generateHandle, archive: archive,
-                                                title: "Locke: Enter your password.",
-                                                subtitle: "Please enter the password for '\(archive.name ?? "Unknown")'.",
-                                                prompt: "The key is not stored and must be regenerated.", data: command)
-            // Activate Locke if it is not already. This will force the user to interact with the new password prompt
-            self.lockeDelegate.activate()
+            // The archive was opened outside this session, so its key is not known and the password
+            // cannot be verified while it is attached. Exporting an unverified key would be unsafe
+            presentError("Close '\(archive.name ?? "the archive")' first",
+                         message: "Locke does not have this archive's key in memory. Close the archive, then generate the recovery key again.")
         } else {
             exportKey(archive, command)
         }
     }
     
-    private func generateHandle(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any) -> Bool {
+    @MainActor
+    private func generateHandle(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any?) async -> Bool {
         if (result == .cancelled) { return false }
-        guard let archiveId = archive.id else { return false }
+        guard let archiveId = archive.id, let command = data as? GenerateCommand else { return false }
+
+        // Calculate the password for this archive
+        let hashString: String
         do {
-            
-            // Calculate the password for this archive
-            let hashString = Keychain.deriveKey(password: password, archiveId: archiveId)
-            
-            // Attach the archive
-            try self.executeAttach(archive, password: hashString)
-            
-            // Note it as open for recordkeeping
-            self.openArchives[archiveId] = hashString
-            
-            // Update the list of mounted archives
-            self.scanArchiveMounts()
-            
-            // Copy
-            let command = data as! GenerateCommand
-            exportKey(archive, command)
-            
-            return true
+            hashString = try Keychain.deriveKey(password: password, archiveId: archiveId)
         } catch {
+            presentError("Unable to read the key for '\(archive.name ?? "archive")'", error)
+            return true
+        }
+
+        // Opening the archive verifies the password before the key is exported
+        do {
+            try await self.executeAttach(archive, password: hashString)
+        } catch {
+            logger.error("Unable to verify password for '\(archive.name ?? "archive")': \(error.localizedDescription)")
             return false
         }
+
+        // Note it as open for recordkeeping
+        self.openArchives[archiveId] = hashString
+
+        // Update the list of mounted archives
+        self.scanArchiveMounts()
+
+        exportKey(archive, command)
+        return true
     }
     
     private func exportKey(_ archive: ArchiveData, _ command: GenerateCommand) {

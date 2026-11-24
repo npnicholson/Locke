@@ -34,13 +34,18 @@ class Logger: ObservableObject {
     
     public func log(_ level: LogLevel, _ str: String, _ predicate: Any? = nil) {
         let entry = LogEntry(level: level, date: Date(), text: str.trimmingCharacters(in: .whitespacesAndNewlines), predicate: predicate)
-        console.append(entry)
-        print (entry)
-        
-        // Prevent the console from growing past 500 entries to save memory
-        while(console.count > 500) {
-            console.remove(at: 0)
+        print(entry)
+
+        // Logging happens from background threads too; only mutate the console on the main thread
+        let append = {
+            self.console.append(entry)
+
+            // Prevent the console from growing past 500 entries to save memory
+            if self.console.count > 500 {
+                self.console.removeFirst(self.console.count - 500)
+            }
         }
+        if Thread.isMainThread { append() } else { DispatchQueue.main.async(execute: append) }
     }
     
     public func trace(_ str: String, _ predicate: Any? = nil) {

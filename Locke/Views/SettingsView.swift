@@ -94,8 +94,8 @@ struct SettingsView: View {
                         )
                     }
                     Button("Create Keychain Entry") {
-                        let duplicateFound = lockeDelegate.AWSManager.storeCredentials(accessKeyId: awsAccessKeyId, secretAccessKey: "")
-                        if (!duplicateFound) {
+                        let created = lockeDelegate.AWSManager.storeCredentials(accessKeyId: awsAccessKeyId, secretAccessKey: "")
+                        if (!created) {
                             showKeychainError = true
                         } else {
                             showKeychainAlert = true
