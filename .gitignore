@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+DerivedData/
+build/
+*.xcscmblueprint
+build.log
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Editor and agent tooling
+.zed/
+.claude/
+.superpowers/

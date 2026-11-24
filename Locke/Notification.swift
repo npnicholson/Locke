@@ -191,7 +191,6 @@ class ClosureNotificationManager {
             
             break
         case NotificationAction.archiveClosureDismiss.id:
-            print ("Dismiss Action", notificationidentifier)
             
             // Remove this notification
             globalNotificationCenter.removePendingNotificationRequests(withIdentifiers: [notificationidentifier])
@@ -243,15 +242,12 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
-        print (response.notification)
-        
         // Route notification as neede to the appropriate handler
         if (response.actionIdentifier == NotificationAction.archiveClosureCancel.id ||
             response.actionIdentifier == NotificationAction.archiveClosureDismiss.id ||
             response.actionIdentifier == NotificationAction.archiveClosurePostpone.id) {
             self.closureManager.notificationHandler(actionIdentifier: response.actionIdentifier, notificationidentifier: response.notification.request.identifier)
         } else {
-            print ("Default Action", response)
             NSApp.sendAction(#selector(self.lockeDelegate.openMainView), to: nil, from:nil)
             
             // If this notification is a closure notification, then clear it from the manager

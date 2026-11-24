@@ -38,7 +38,6 @@ extension ArchiveManager {
         
         savePanel.begin { response in
             if response == .OK, let destinationUrl = savePanel.url {
-                print (destinationUrl)
                 try? self.executeBackup(archive, destinationUrl)
             }
         }

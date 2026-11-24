@@ -14,7 +14,7 @@ struct Page : Identifiable, Hashable {
     var systemImage: String
 }
 
-let favoritesPage = Page(title: "Favotites", systemImage: "heart")
+let favoritesPage = Page(title: "Favorites", systemImage: "heart")
 let archivesPage = Page(title: "Archives", systemImage: "archivebox")
 let settingsPage = Page(title: "Settings", systemImage: "gearshape")
 

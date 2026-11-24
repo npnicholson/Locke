@@ -31,7 +31,7 @@ extension ArchiveManager {
     }
     
     private func recoverHandle(_ result: PromptResult, _ archive: ArchiveData, _ key: String, _ data: Any) -> Bool {
-        if (result == .cancled) { return false }
+        if (result == .cancelled) { return false }
         guard let archiveId = archive.id else { return false }
         do {
             

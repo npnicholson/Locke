@@ -32,7 +32,7 @@ extension ArchiveManager {
     }
     
     private func openHandler(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any) -> Bool {
-        if (result == .cancled) {
+        if (result == .cancelled) {
             return false
         }
         

@@ -8,11 +8,6 @@
 import Foundation
 import CoreData
 
-enum TaskType {
-    case open
-    case close
-}
-
 // Errors associated with the Archive Class
 enum ArchiveError: Error {
     case archiveExists
@@ -113,7 +108,7 @@ class ArchiveManager: NSObject, ObservableObject {
             for fileURL in fileURLs {
                 try fm.removeItem(at: fileURL)
             }
-        } catch  { print(error) }
+        } catch { logger.error("Unable to clear temp directory: \(error.localizedDescription)") }
         
         // Get ArchiveData in CoreData as 'archives'
         let archives: [ArchiveData] = try! self.context.fetch(globalArchiveFetchRequest)

@@ -11,7 +11,7 @@ import SFSafeSymbols
 // Possible results from button interaction with the prompt.
 enum PromptResult {
     case submitted
-    case cancled
+    case cancelled
 }
 
 // Password Prompt Manager class which is responsible for creating and managing
@@ -180,7 +180,7 @@ struct PasswordPromptView: View {
     
     func cancel() {
         // Run the handler for this button action
-        let _ = manager.execute(.cancled)
+        let _ = manager.execute(.cancelled)
         // Reset the password
         password = ""
         // Close the window

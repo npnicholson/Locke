@@ -5,22 +5,6 @@
 //  Created by Norris Nicholson on 8/14/23.
 //
 
-/*
- 
- Todo Features
- - Recently deleted archives
- - Display key to the user when an archive is created
- - Upload key to lastpass
- - Recover from lastpass
- - Recover from key
- - Backup to S3 or iCloud
- - Restore from S3 or iCloud
- - Change password / generate new key
- - Add hidden .dat file to the top level of the archive for recovery of core data info
- - Remove compact and add it to the close function
- - Add a ... with more options
- */
-
 import SwiftUI
 import AppKit
 import SFSafeSymbols
@@ -42,7 +26,6 @@ let tempDirectory = directoryURL.appending(path: "Temp")
 // Build a fetch request which can be used to access archives in order
 let globalArchiveFetchRequest = NSFetchRequest<ArchiveData>(entityName: "ArchiveData")
 let globalArchiveSortDescriptor = NSSortDescriptor(key: "created", ascending: false)
-let globalArchiveSortDescriptorName = NSSortDescriptor(key: "name", ascending: true)
 let globalArchiveSortDescriptorModified = NSSortDescriptor(key: "modified", ascending: false)
 
 // Extension to string for validating the complexity of a password
@@ -116,73 +99,9 @@ public extension Bundle {
 
 
 
-// @see: https://www.fivestars.blog/articles/swiftui-share-layout-information/
-struct SizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
-  static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
-}
-extension View {
-  func readSize(onChange: @escaping (CGSize) -> Void) -> some View {
-    background(
-      GeometryReader { geometryProxy in
-        Color.clear
-          .preference(key: SizePreferenceKey.self, value: geometryProxy.size)
-      }
-    )
-    .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
-  }
-}
-
-// @see: https://stackoverflow.com/questions/47714560/how-to-convert-dispatchtimeinterval-to-nstimeinterval-or-double
-extension DispatchTimeInterval {
-    func toSeconds() -> Int? {
-        var result: Int? = 0
-        switch self {
-        case .seconds(let value):
-            result = Int(Double(value))
-        case .milliseconds(let value):
-            result = Int(Double(value)*0.001)
-        case .microseconds(let value):
-            result = Int(Double(value)*0.000001)
-        case .nanoseconds(let value):
-            result = Int(Double(value)*0.000000001)
-        case .never:
-            result = nil
-        @unknown default:
-            result = nil
-        }
-        return result
-    }
-}
-
-struct ArchiveMonitorData {
-    let id: UUID
-    let mountURL: URL
-    let bundleURL: URL
-}
-
 // MARK: - Ephemeral Storage
 class LockeEphemeralStorage: NSObject, ObservableObject {
-    @Published public var passwordDict: [UUID: String] = [:]
     @Published public var archiveOpen: Bool = false
-    
-    var archiveManager: ArchiveManager!
-
-    public func setPassword(id: UUID, password: String) -> Void {
-        passwordDict[id] = password
-    }
-    
-    public func getPassword(id: UUID) -> String? {
-        return passwordDict[id]
-    }
-}
-
-func addSubview(subView:NSView, toView parentView:NSView) {
-         parentView.addSubview(subView)
-         var viewBindingsDict = [String: AnyObject]()
-         viewBindingsDict["subView"] = subView
-         parentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[subView]|", options: [], metrics: nil, views: viewBindingsDict))
-         parentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[subView]|", options: [], metrics: nil, views: viewBindingsDict))
 }
 
 // Define the global logger
@@ -219,7 +138,6 @@ class LockeDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             storage: globalEphemeralStorage,
             lockeDelegate: self,
             passwordPromptManager: passwordPromptManager)
-        globalEphemeralStorage.archiveManager = archiveManager
         
         self.AWSManager = Locke.AWSManager(self);
         self.BackblazeManager = Locke.BackblazeManager(self)
@@ -319,17 +237,6 @@ struct LockeApp: App {
                 .environment(\.managedObjectContext, lockeDelegate.container.viewContext)
                 .environmentObject(lockeDelegate.archiveManager)
                 .environmentObject(lockeDelegate)
-//                .onAppear {
-//                    NotificationCenter.default.addObserver(
-//                        forName: NSWindow.didChangeOcclusionStateNotification, object: nil, queue: nil)
-//                    { notification in
-//                        
-//                        if ((notification.object as! NSWindow).isVisible) {
-//                            ephemeralStorage.menuRefresh = !ephemeralStorage.menuRefresh
-//                            print ("Top Level \(ephemeralStorage.menuRefresh)")
-//                        }
-//                    }
-//                }
         } label: {
             HStack {
                 Image(systemSymbol: SFSymbol.lockRectangleStack)

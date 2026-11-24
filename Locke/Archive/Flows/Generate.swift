@@ -46,7 +46,7 @@ extension ArchiveManager {
     }
     
     private func generateHandle(_ result: PromptResult, _ archive: ArchiveData, _ password: String, _ data: Any) -> Bool {
-        if (result == .cancled) { return false }
+        if (result == .cancelled) { return false }
         guard let archiveId = archive.id else { return false }
         do {
             

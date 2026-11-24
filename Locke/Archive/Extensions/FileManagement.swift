@@ -11,20 +11,6 @@ import Foundation
 // Add all of the directory and filemanager functions to the archive manager. Seperated to make
 // the main manager cleaner.
 extension ArchiveManager {
-    // Get the date the archive was last saved to disk
-    public func modified(_ archive: ArchiveData) throws -> Date{
-        // Ensure that the mount and bundle urls are valid
-        guard let bundleURL = archive.bundleURL else {
-            throw ArchiveError.archiveDoesNotExist
-        }
-        
-        if let date = directoryModified(url: bundleURL) {
-            return date
-        } else {
-            return Date()
-        }
-    }
-    
     // See if this archive exists on disk as a sparsebundle
     public func exists(_ archive: ArchiveData) -> Bool {
         if let url = archive.bundleURL {

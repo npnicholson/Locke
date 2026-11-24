@@ -130,9 +130,6 @@ extension ArchiveManager {
             throw ArchiveError.archiveDoesNotExist
         }
         
-        print ("a", bundleURL.path(percentEncoded: false), outputURL.path(percentEncoded: false))
-        
-        
         try! fm.copyItem(atPath: bundleURL.path(percentEncoded: false), toPath: outputURL.path(percentEncoded: false))
     }
 }

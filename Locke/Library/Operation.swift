@@ -85,18 +85,3 @@ func executeTask(executable: URL, arguments: [String] = [], inputPipeString: Str
 
     return Operation(code: task.terminationStatus, success: task.terminationStatus == 0, stdout: stdout, stderr: stderr)
 }
-
-//func detachAll() throws {
-//    let archives = try listAttached()
-//    try archives.forEach { archive in
-//        try archive.detach()
-//    }
-//}
-//
-//func attachAll() throws {
-//    let archives = try listArchives(EmptySettings)
-//    try archives.forEach { archive in
-//        archive.password = "saffie"
-//        try archive.attach()
-//    }
-//}
